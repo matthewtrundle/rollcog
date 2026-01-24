@@ -6,8 +6,10 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { Inter, Source_Serif_4 } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { Navigation } from "@/components/common/navigation";
 import { Footer } from "@/components/common/footer";
+import { ChatWidget } from "@/components/common/chat-widget";
 import { generateLocalBusinessSchema } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/utils/constants";
 import "./globals.css";
@@ -94,6 +96,8 @@ export default function RootLayout({
         <Navigation />
         <main id="main-content" className="flex-1 pt-16 lg:pt-20">{children}</main>
         <Footer />
+        <ChatWidget />
+        <Analytics />
       </body>
     </html>
   );

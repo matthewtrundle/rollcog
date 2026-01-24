@@ -319,14 +319,14 @@ function ServicesSection(): ReactElement {
 
   return (
     <Section variant="charcoal" padding="xl">
-      <div className="grid lg:grid-cols-12 gap-16 lg:gap-24">
+      <div className="grid lg:grid-cols-12 gap-12 lg:gap-16">
         {/* Services list */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
           variants={staggerContainer}
-          className="lg:col-span-6"
+          className="lg:col-span-7"
         >
           <motion.p
             variants={fadeInUp}
@@ -350,7 +350,7 @@ function ServicesSection(): ReactElement {
                 >
                   <Link
                     href={service.href}
-                    className="group block py-10 first:pt-0 last:pb-0"
+                    className="group block py-12 first:pt-0 last:pb-0"
                     onMouseEnter={() => setHoveredService(service.id)}
                     onMouseLeave={() => setHoveredService(null)}
                   >
@@ -359,16 +359,16 @@ function ServicesSection(): ReactElement {
                         <h3 className="text-2xl lg:text-3xl font-medium text-white group-hover:text-[var(--accent)] transition-colors duration-300">
                           {service.name}
                         </h3>
-                        <p className="mt-4 text-white/70 max-w-lg leading-relaxed text-base lg:text-lg">
+                        <p className="mt-4 text-white/70 leading-relaxed text-base lg:text-lg">
                           {details?.description || service.description}
                         </p>
                         {/* Feature pills */}
                         {details?.features && (
-                          <div className="mt-4 flex flex-wrap gap-2">
+                          <div className="mt-5 flex flex-wrap gap-2.5">
                             {details.features.map((feature) => (
                               <span
                                 key={feature}
-                                className="text-xs text-white/50 border border-white/20 px-2.5 py-1 rounded-full"
+                                className="text-xs text-white/50 border border-white/20 px-3 py-1.5 rounded-full"
                               >
                                 {feature}
                               </span>
@@ -423,7 +423,7 @@ function ServicesSection(): ReactElement {
         </motion.div>
 
         {/* Hover image preview */}
-        <div className="hidden lg:block lg:col-span-6 relative">
+        <div className="hidden lg:block lg:col-span-5 relative">
           <div className="sticky top-32">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden bg-gray-800">
               {/* Default state - show roofing inspection */}
@@ -481,6 +481,24 @@ function ServicesSection(): ReactElement {
   );
 }
 
+const TESTIMONIALS = [
+  {
+    quote: "Rollcog Roofs transformed our old, worn-out roof into a modern marvel. Their expertise and professionalism were evident from the start.",
+    name: "Jamie T.",
+    location: "Illinois",
+  },
+  {
+    quote: "The team at Rollcog Roofs provided a fast and cost-effective solution when our business was in a bind. Truly the best in the region!",
+    name: "Raj S.",
+    location: "Ohio",
+  },
+  {
+    quote: "From consultation to completion, the experience was seamless. I'd recommend Rollcog Roofs to anyone in need of top-tier roofing services.",
+    name: "Alicia D.",
+    location: "Georgia",
+  },
+];
+
 function TestimonialSection(): ReactElement {
   return (
     <Section variant="cream" padding="xl">
@@ -489,28 +507,60 @@ function TestimonialSection(): ReactElement {
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
         variants={staggerContainer}
-        className="max-w-3xl mx-auto text-center"
       >
-        <blockquote>
-          <motion.p
-            variants={fadeInUp}
-            className="text-2xl md:text-3xl font-medium text-[var(--foreground)] leading-relaxed"
-          >
-            &ldquo;Rollcog delivered excellent work on our warehouse roof.
-            Professional, on-time, and within budget. We&apos;ve used them for
-            three of our commercial properties now—consistent quality every
-            time.&rdquo;
-          </motion.p>
-          <motion.footer variants={fadeInUp} className="mt-8">
-            <div className="w-12 h-0.5 bg-[var(--accent)] mx-auto mb-6" />
-            <p className="font-medium text-[var(--foreground)]">David R.</p>
-            <p className="text-sm text-[var(--text-muted)]">
-              Real Estate Developer, Chicago
-            </p>
-          </motion.footer>
-        </blockquote>
+        {/* Section header */}
+        <motion.div variants={fadeInUp} className="text-center mb-16">
+          <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">
+            Testimonials
+          </p>
+          <h2 className="heading-section text-[var(--foreground)]">
+            Hear From Our Corporate Clients
+          </h2>
+        </motion.div>
 
-        <motion.div variants={fadeInUp} className="mt-16">
+        {/* Testimonials grid */}
+        <div className="grid gap-8 md:grid-cols-3">
+          {TESTIMONIALS.map((testimonial, index) => (
+            <motion.div
+              key={testimonial.name}
+              variants={fadeInUp}
+              custom={index}
+              className="bg-white rounded-2xl p-8 shadow-lg border border-[var(--border)]"
+            >
+              {/* 5 stars */}
+              <div className="flex gap-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <svg
+                    key={i}
+                    className="w-5 h-5 text-[var(--accent)]"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                ))}
+              </div>
+
+              {/* Quote */}
+              <blockquote className="text-[var(--text-body)] leading-relaxed mb-6">
+                &ldquo;{testimonial.quote}&rdquo;
+              </blockquote>
+
+              {/* Author */}
+              <div className="pt-6 border-t border-[var(--border)]">
+                <p className="font-medium text-[var(--foreground)]">
+                  {testimonial.name}
+                </p>
+                <p className="text-sm text-[var(--text-muted)]">
+                  {testimonial.location}
+                </p>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* CTA */}
+        <motion.div variants={fadeInUp} className="mt-16 text-center">
           <Link href="/contact">
             <Button variant="primary" size="xl" showArrow>
               Start Your Project
