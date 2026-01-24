@@ -9,7 +9,6 @@ import type { Metadata } from "next";
 import { Button, Section, Accordion } from "@/components/ui";
 import { COMPANY } from "@/lib/utils/constants";
 import { generatePageMetadata, generateFAQSchema } from "@/lib/seo";
-import { createPhoneLink } from "@/lib/utils";
 
 const FAQ_ITEMS = [
   {
@@ -111,20 +110,15 @@ export default function FAQPage(): ReactElement {
             Still Have Questions?
           </h2>
           <p className="mt-6 text-lg text-[var(--text-body)]">
-            Our team is here to help. Reach out by phone or email and we&apos;ll get
+            Our team is here to help. Send us a message and we&apos;ll get
             back to you within 24 hours.
           </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="mt-8">
             <Link href="/contact">
               <Button variant="primary" size="lg" showArrow>
                 Contact Us
               </Button>
             </Link>
-            <a href={createPhoneLink(COMPANY.phone)}>
-              <Button variant="secondary" size="lg">
-                Call {COMPANY.phone}
-              </Button>
-            </a>
           </div>
         </div>
       </Section>

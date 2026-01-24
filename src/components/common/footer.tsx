@@ -14,7 +14,6 @@ import {
   CERTIFICATIONS,
   SERVICE_AREAS,
 } from "@/lib/utils/constants";
-import { createPhoneLink, createEmailLink, formatPhone } from "@/lib/utils";
 
 /**
  * Footer component with editorial minimal styling.
@@ -94,18 +93,6 @@ export function Footer(): ReactElement {
                 Contact
               </h3>
               <div className="space-y-4 text-sm">
-                <a
-                  href={createPhoneLink(COMPANY.phone)}
-                  className="block text-white/80 hover:text-white transition-colors"
-                >
-                  {formatPhone(COMPANY.phone)}
-                </a>
-                <a
-                  href={createEmailLink(COMPANY.email)}
-                  className="block text-white/80 hover:text-white transition-colors"
-                >
-                  {COMPANY.email}
-                </a>
                 <address className="text-white/60 not-italic">
                   {COMPANY.address.street}
                   <br />

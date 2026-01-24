@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import { Section, Card } from "@/components/ui";
 import { ContactForm } from "@/features/contact";
 import { COMPANY } from "@/lib/utils/constants";
-import { createPhoneLink, createEmailLink, formatPhone } from "@/lib/utils";
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -126,62 +125,6 @@ export default function ContactPage(): ReactElement {
             className="lg:col-span-5"
           >
             <div className="sticky top-28 space-y-8">
-              {/* Phone Card */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="p-6 rounded-2xl bg-white shadow-lg border border-[var(--border)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-6 h-6 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-1">
-                      Phone
-                    </p>
-                    <a
-                      href={createPhoneLink(COMPANY.phone)}
-                      className="text-xl font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
-                    >
-                      {formatPhone(COMPANY.phone)}
-                    </a>
-                    <p className="text-sm text-[var(--text-muted)] mt-1">
-                      Mon-Fri, 7am-5pm CST
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Email Card */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="p-6 rounded-2xl bg-white shadow-lg border border-[var(--border)]"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
-                    <svg className="w-6 h-6 text-[var(--accent)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-1">
-                      Email
-                    </p>
-                    <a
-                      href={createEmailLink(COMPANY.email)}
-                      className="text-lg font-semibold text-[var(--foreground)] hover:text-[var(--accent)] transition-colors"
-                    >
-                      {COMPANY.email}
-                    </a>
-                    <p className="text-sm text-[var(--text-muted)] mt-1">
-                      24-hour response time
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
               {/* Office Card */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
