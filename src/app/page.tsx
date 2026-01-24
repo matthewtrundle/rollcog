@@ -1,65 +1,523 @@
-import Image from "next/image";
+/**
+ * @fileoverview Homepage with editorial gallery design + polish animations
+ * @module app/page
+ */
 
-export default function Home() {
+"use client";
+
+import { type ReactElement, useState, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { motion, useScroll, useTransform, type Variants } from "framer-motion";
+import { Button, Section } from "@/components/ui";
+import { LoadingScreen } from "@/components/common/loading-screen";
+import { COMPANY, SERVICES } from "@/lib/utils/constants";
+
+// Service images mapping
+const SERVICE_IMAGES: Record<string, string> = {
+  "tpo-roofing": "/images/tpo-roofing-installation.png",
+  "mod-bit": "/images/mod-bit-torch-applied.png",
+  "flat-roof-repair": "/images/flat-roof-repair.png",
+  "commercial-industrial": "/images/commercial-warehouse-roofing.png",
+};
+
+// Enhanced service details with rich descriptions and features
+const SERVICE_DETAILS: Record<string, { description: string; features: string[] }> = {
+  "tpo-roofing": {
+    description: "The industry's leading single-ply membrane for commercial flat roofs. TPO delivers exceptional energy savings with its reflective white surface, reducing cooling costs by up to 30%. Heat-welded seams create watertight bonds that outlast traditional roofing adhesives.",
+    features: ["Energy Star rated", "20-30 year lifespan", "Low maintenance"]
+  },
+  "mod-bit": {
+    description: "Multi-layer modified bitumen systems provide superior waterproofing through redundant protection. Ideal for buildings with heavy foot traffic or rooftop equipment. Torch-applied or cold-applied options available for any installation environment.",
+    features: ["Multi-layer protection", "High puncture resistance", "Proven 40+ year track record"]
+  },
+  "flat-roof-repair": {
+    description: "From minor leaks to complete tear-offs, we diagnose and resolve flat roof issues quickly. Emergency repairs within 5 days protect your building, inventory, and operations. Free inspections help identify problems before they become expensive disasters.",
+    features: ["Emergency response within 5 days", "Free inspections", "All flat roof types serviced"]
+  },
+  "commercial-industrial": {
+    description: "Full-service roofing for warehouses, factories, retail centers, office buildings, and industrial complexes. We work around your business hours to minimize disruption and deliver quotes within 24 hours so you can plan accordingly.",
+    features: ["Minimal business disruption", "Multi-state coverage", "All building types"]
+  }
+};
+
+// Descriptive alt text for service images (accessibility)
+const SERVICE_ALT_TEXT: Record<string, string> = {
+  "tpo-roofing": "Commercial building with white TPO roofing membrane installation in progress",
+  "mod-bit": "Roofing crew applying modified bitumen with torch-down method",
+  "flat-roof-repair": "Close-up of flat roof repair work showing damaged section being replaced",
+  "commercial-industrial": "Large commercial warehouse with completed industrial roofing system",
+};
+
+// Animation variants
+const fadeInUp: Variants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: { opacity: 1, y: 0 },
+};
+
+const staggerContainer: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15 },
+  },
+};
+
+const slideInLeft: Variants = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { opacity: 1, x: 0 },
+};
+
+const slideInRight: Variants = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { opacity: 1, x: 0 },
+};
+
+/**
+ * Homepage component with editorial gallery design and polish animations.
+ */
+export default function HomePage(): ReactElement {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <LoadingScreen minDisplayTime={1200} />
+
+      {/* Hero - Full-bleed with parallax */}
+      <HeroSection />
+
+      {/* Statement + Work - Asymmetric layout */}
+      <StatementSection />
+
+      {/* Services - With hover image previews */}
+      <ServicesSection />
+
+      {/* Single Featured Testimonial */}
+      <TestimonialSection />
+    </>
+  );
+}
+
+function HeroSection(): ReactElement {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax effect for video
+  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.1]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+  return (
+    <section
+      ref={ref}
+      className="relative bg-[var(--charcoal)] text-white overflow-hidden"
+    >
+      {/* Blue letterbox area - creates the IMAX feel */}
+      <div className="relative py-10 lg:py-16">
+        {/* Content container with 2-column layout */}
+        <motion.div
+          className="relative mx-auto max-w-7xl px-6 lg:px-8"
+          style={{ opacity: contentOpacity }}
+        >
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            {/* Text content - left side */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={staggerContainer}
+              className="relative z-10"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <motion.p
+                variants={fadeInUp}
+                className="text-sm font-medium text-[var(--accent)] uppercase tracking-widest mb-6"
+              >
+                GAF Certified · {COMPANY.experience}+ Years Experience
+              </motion.p>
+
+              <motion.h1
+                variants={fadeInUp}
+                className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-white leading-[1.1] tracking-tight"
+                style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
+              >
+                Your Trusted Commercial Roofing Contractors
+              </motion.h1>
+
+              <motion.div variants={fadeInUp} className="w-24 h-1 bg-[var(--accent)] mt-6" />
+
+              <motion.p
+                variants={fadeInUp}
+                className="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-lg"
+              >
+                Premium flat roof solutions for commercial and industrial buildings.
+                Trusted by property managers and developers across the Midwest.
+              </motion.p>
+
+              <motion.div variants={fadeInUp} className="mt-8 flex flex-col sm:flex-row gap-4">
+                <Link href="/contact">
+                  <Button variant="primary" size="lg" showArrow>
+                    Get Free Estimate
+                  </Button>
+                </Link>
+                <Link href="/services">
+                  <Button variant="outline-light" size="lg">
+                    Our Services
+                  </Button>
+                </Link>
+              </motion.div>
+
+              {/* Trust badges */}
+              <motion.div
+                variants={fadeInUp}
+                className="mt-10 pt-6 border-t border-white/20 flex flex-wrap gap-6 text-sm text-white/60"
+              >
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>24-Hour Estimates</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>Emergency Repairs</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg className="w-4 h-4 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span>9+ States Served</span>
+                </div>
+              </motion.div>
+            </motion.div>
+
+            {/* Cinematic video container - right side */}
+            <motion.div
+              initial="hidden"
+              animate="visible"
+              variants={slideInRight}
+              className="relative"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+              {/* Ultra-wide aspect ratio container (2.39:1 IMAX) */}
+              <motion.div
+                className="relative aspect-[2.39/1] rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
+                style={{ scale: videoScale }}
+              >
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster="/images/hero-roofing-team.png"
+                >
+                  <source src="/videos/aerial-drone.mp4" type="video/mp4" />
+                </video>
+                {/* Subtle vignette overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20" />
+              </motion.div>
+              {/* Cinematic label */}
+              <div className="absolute -bottom-3 right-4 text-[10px] uppercase tracking-widest text-white/30 font-medium">
+                Aerial View
+              </div>
+            </motion.div>
+          </div>
+        </motion.div>
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 2 }}
+        className="absolute bottom-6 left-1/2 -translate-x-1/2"
+      >
+        <motion.div
+          animate={{ y: [0, 8, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity }}
+          className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-2"
+        >
+          <motion.div className="w-1 h-2 bg-white/60 rounded-full" />
+        </motion.div>
+      </motion.div>
+    </section>
+  );
+}
+
+function StatementSection(): ReactElement {
+  return (
+    <Section variant="cream" padding="xl">
+      <div className="grid gap-16 lg:grid-cols-12 items-center">
+        {/* Text - Narrower column with slide-in */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={slideInLeft}
+          className="lg:col-span-5"
+        >
+          <motion.p
+            variants={fadeInUp}
+            className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            Who We Serve
+          </motion.p>
+          <motion.h2
+            variants={fadeInUp}
+            className="heading-section text-[var(--foreground)]"
           >
-            Documentation
-          </a>
+            Building owners and property managers who value quality over
+            shortcuts
+          </motion.h2>
+          <motion.p
+            variants={fadeInUp}
+            className="mt-6 text-lg text-[var(--text-body)] leading-relaxed"
+          >
+            For over {COMPANY.experience} years, we&apos;ve worked with general
+            contractors, developers, and facility managers who need roofing
+            partners they can trust. No surprises, no games—just honest work at
+            fair prices.
+          </motion.p>
+          <motion.div variants={fadeInUp} className="mt-8">
+            <Link href="/about">
+              <Button variant="secondary" size="lg" showArrow>
+                About Our Work
+              </Button>
+            </Link>
+          </motion.div>
+        </motion.div>
+
+        {/* Video - Larger column with slide-in */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={slideInRight}
+          className="lg:col-span-7"
+        >
+          <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden group">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              poster="/images/commercial-warehouse-roofing.png"
+            >
+              <source src="/videos/aerial-scene.mp4" type="video/mp4" />
+            </video>
+          </div>
+        </motion.div>
+      </div>
+    </Section>
+  );
+}
+
+function ServicesSection(): ReactElement {
+  const [hoveredService, setHoveredService] = useState<string | null>(null);
+
+  return (
+    <Section variant="charcoal" padding="xl">
+      <div className="grid lg:grid-cols-12 gap-16 lg:gap-24">
+        {/* Services list */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="lg:col-span-6"
+        >
+          <motion.p
+            variants={fadeInUp}
+            className="text-sm font-medium text-white/50 uppercase tracking-wider mb-4"
+          >
+            Services
+          </motion.p>
+          <motion.h2 variants={fadeInUp} className="heading-section mb-14">
+            What We Do
+          </motion.h2>
+
+          {/* Clean vertical text list */}
+          <div className="space-y-0 divide-y divide-white/15">
+            {SERVICES.map((service, index) => {
+              const details = SERVICE_DETAILS[service.id];
+              return (
+                <motion.div
+                  key={service.id}
+                  variants={fadeInUp}
+                  custom={index}
+                >
+                  <Link
+                    href={service.href}
+                    className="group block py-10 first:pt-0 last:pb-0"
+                    onMouseEnter={() => setHoveredService(service.id)}
+                    onMouseLeave={() => setHoveredService(null)}
+                  >
+                    <div className="flex items-start justify-between gap-8">
+                      <div>
+                        <h3 className="text-2xl lg:text-3xl font-medium text-white group-hover:text-[var(--accent)] transition-colors duration-300">
+                          {service.name}
+                        </h3>
+                        <p className="mt-4 text-white/70 max-w-lg leading-relaxed text-base lg:text-lg">
+                          {details?.description || service.description}
+                        </p>
+                        {/* Feature pills */}
+                        {details?.features && (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {details.features.map((feature) => (
+                              <span
+                                key={feature}
+                                className="text-xs text-white/50 border border-white/20 px-2.5 py-1 rounded-full"
+                              >
+                                {feature}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <motion.div
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{
+                          opacity: hoveredService === service.id ? 1 : 0,
+                          x: hoveredService === service.id ? 0 : -10,
+                        }}
+                        transition={{ duration: 0.2 }}
+                        className="flex-shrink-0 mt-2"
+                      >
+                        <svg
+                          className="w-6 h-6 text-[var(--accent)]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17 8l4 4m0 0l-4 4m4-4H3"
+                          />
+                        </svg>
+                      </motion.div>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          <motion.div
+            variants={fadeInUp}
+            className="mt-14 pt-8 border-t border-white/15"
+          >
+            <p className="text-white/60 text-base">
+              Need something specific?{" "}
+              <Link
+                href="/contact"
+                className="text-[var(--accent)] hover:underline"
+              >
+                Get in touch
+              </Link>
+            </p>
+          </motion.div>
+        </motion.div>
+
+        {/* Hover image preview */}
+        <div className="hidden lg:block lg:col-span-6 relative">
+          <div className="sticky top-32">
+            <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden bg-gray-800">
+              {/* Default state - show roofing inspection */}
+              <motion.div
+                initial={{ opacity: 1 }}
+                animate={{ opacity: hoveredService ? 0 : 1 }}
+                transition={{ duration: 0.3 }}
+                className="absolute inset-0"
+              >
+                <Image
+                  src="/images/roofing-inspection.png"
+                  alt="Professional roof inspection"
+                  fill
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <p className="text-sm text-gray-300">
+                    Hover over a service to see more
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Service-specific images */}
+              {SERVICES.map((service) => (
+                <motion.div
+                  key={service.id}
+                  initial={{ opacity: 0, scale: 1.1 }}
+                  animate={{
+                    opacity: hoveredService === service.id ? 1 : 0,
+                    scale: hoveredService === service.id ? 1 : 1.1,
+                  }}
+                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={SERVICE_IMAGES[service.id] || "/images/roofing-inspection.png"}
+                    alt={SERVICE_ALT_TEXT[service.id] || `${service.name} - professional roofing service`}
+                    fill
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-6 left-6 right-6">
+                    <p className="text-lg font-medium text-white">
+                      {service.name}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </Section>
+  );
+}
+
+function TestimonialSection(): ReactElement {
+  return (
+    <Section variant="cream" padding="xl">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+        variants={staggerContainer}
+        className="max-w-3xl mx-auto text-center"
+      >
+        <blockquote>
+          <motion.p
+            variants={fadeInUp}
+            className="text-2xl md:text-3xl font-medium text-[var(--foreground)] leading-relaxed"
+          >
+            &ldquo;Rollcog delivered excellent work on our warehouse roof.
+            Professional, on-time, and within budget. We&apos;ve used them for
+            three of our commercial properties now—consistent quality every
+            time.&rdquo;
+          </motion.p>
+          <motion.footer variants={fadeInUp} className="mt-8">
+            <div className="w-12 h-0.5 bg-[var(--accent)] mx-auto mb-6" />
+            <p className="font-medium text-[var(--foreground)]">David R.</p>
+            <p className="text-sm text-[var(--text-muted)]">
+              Real Estate Developer, Chicago
+            </p>
+          </motion.footer>
+        </blockquote>
+
+        <motion.div variants={fadeInUp} className="mt-16">
+          <Link href="/contact">
+            <Button variant="primary" size="xl" showArrow>
+              Start Your Project
+            </Button>
+          </Link>
+        </motion.div>
+      </motion.div>
+    </Section>
   );
 }
