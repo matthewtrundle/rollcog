@@ -11,6 +11,7 @@ import {
   generateCustomerConfirmationEmail,
   generateCustomerConfirmationEmailText,
 } from "@/features/contact/email-template";
+import { createLead } from "@/lib/db";
 
 /**
  * Handles POST requests for contact form submissions.
@@ -57,6 +58,23 @@ export async function POST(request: Request): Promise<NextResponse> {
           message: "Message sent successfully",
         });
       }
+    }
+
+    // Save lead to database (non-blocking - don't fail if DB is unavailable)
+    try {
+      await createLead({
+        name,
+        email,
+        phone: phone || null,
+        company: company || null,
+        service: service || null,
+        message,
+        source: source || null,
+      });
+      console.log("Lead saved to database:", email);
+    } catch (dbError) {
+      // Log but don't fail - email notifications are the primary function
+      console.error("Failed to save lead to database:", dbError);
     }
 
     // Check for Resend API key
