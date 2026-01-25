@@ -7,6 +7,7 @@
 
 import { type ReactElement, useState } from "react";
 import { cn } from "@/lib/utils";
+import { trackFAQClick } from "@/lib/utils/analytics";
 
 interface AccordionItemProps {
   question: string;
@@ -98,6 +99,13 @@ export function Accordion({
   const [openIndexes, setOpenIndexes] = useState<Set<number>>(new Set());
 
   const handleToggle = (index: number): void => {
+    const isOpening = !openIndexes.has(index);
+
+    // Track FAQ click when opening (not closing)
+    if (isOpening) {
+      trackFAQClick(items[index].question);
+    }
+
     setOpenIndexes((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(index)) {

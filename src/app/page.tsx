@@ -147,12 +147,12 @@ function HeroSection(): ReactElement {
 
               <motion.div variants={fadeInUp} className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link href="/contact">
-                  <Button variant="primary" size="lg" showArrow>
+                  <Button variant="primary" size="lg" showArrow trackingLabel="Hero">
                     Get Free Estimate
                   </Button>
                 </Link>
                 <Link href="/services">
-                  <Button variant="outline-light" size="lg">
+                  <Button variant="outline-light" size="lg" trackingLabel="Hero">
                     Our Services
                   </Button>
                 </Link>
@@ -282,7 +282,7 @@ function StatementSection(): ReactElement {
           </motion.p>
           <motion.div variants={fadeInUp} className="mt-8">
             <Link href="/about">
-              <Button variant="secondary" size="lg" showArrow>
+              <Button variant="secondary" size="lg" showArrow trackingLabel="Statement">
                 About Our Work
               </Button>
             </Link>
@@ -564,7 +564,7 @@ function TestimonialSection(): ReactElement {
         {/* CTA */}
         <motion.div variants={fadeInUp} className="mt-16 text-center">
           <Link href="/contact">
-            <Button variant="primary" size="xl" showArrow>
+            <Button variant="primary" size="xl" showArrow trackingLabel="Testimonials">
               Start Your Project
             </Button>
           </Link>

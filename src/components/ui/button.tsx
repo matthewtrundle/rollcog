@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @fileoverview Button component with European premium styling
  * @module components/ui/button
@@ -6,6 +8,7 @@
 import { type ReactElement, type ButtonHTMLAttributes, forwardRef } from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
+import { trackCTAClick } from "@/lib/utils/analytics";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -46,6 +49,8 @@ export interface ButtonProps
   isLoading?: boolean;
   /** Whether to show an arrow icon after the text */
   showArrow?: boolean;
+  /** Analytics tracking label - tracks CTA click when provided */
+  trackingLabel?: string;
 }
 
 /**
@@ -85,12 +90,24 @@ function ArrowIcon({ className }: { className?: string }): ReactElement {
  * ```
  */
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, isLoading, showArrow, children, disabled, ...props }, ref): ReactElement => {
+  ({ className, variant, size, isLoading, showArrow, trackingLabel, children, disabled, onClick, ...props }, ref): ReactElement => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
+      // Track CTA click if tracking label provided
+      if (trackingLabel) {
+        const buttonText = typeof children === "string" ? children : trackingLabel;
+        trackCTAClick(trackingLabel, buttonText);
+      }
+
+      // Call original onClick handler
+      onClick?.(e);
+    };
+
     return (
       <button
         className={cn(buttonVariants({ variant, size, className }), "group")}
         ref={ref}
         disabled={disabled || isLoading}
+        onClick={handleClick}
         {...props}
       >
         {isLoading ? (
