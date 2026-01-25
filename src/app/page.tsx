@@ -210,13 +210,13 @@ function HeroSection(): ReactElement {
                   loop
                   playsInline
                   preload="auto"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
                   poster="/images/hero-roofing-team.png"
                 >
                   <source src="/videos/aerial-drone.mp4" type="video/mp4" />
                 </video>
-                {/* Subtle vignette overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-black/20" />
+                {/* Subtle vignette overlay - also helps hide any remaining watermark */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
               </motion.div>
               {/* Cinematic label */}
               <div className="absolute -bottom-3 right-4 text-[10px] uppercase tracking-widest text-white/30 font-medium">
@@ -303,7 +303,7 @@ function StatementSection(): ReactElement {
               muted
               loop
               playsInline
-              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left transition-transform duration-700 group-hover:scale-[1.15]"
               poster="/images/commercial-warehouse-roofing.png"
             >
               <source src="/videos/aerial-scene.mp4" type="video/mp4" />

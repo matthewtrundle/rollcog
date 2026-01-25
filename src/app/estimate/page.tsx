@@ -274,20 +274,20 @@ function HeroSection({
               variants={fadeInUp}
               className="mt-8 relative rounded-2xl overflow-hidden shadow-2xl"
             >
-              <div className="aspect-video relative">
+              <div className="aspect-video relative overflow-hidden">
                 <video
                   autoPlay
                   muted
                   loop
                   playsInline
                   preload="auto"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
                   poster={config.poster}
                 >
                   <source src={config.video} type="video/mp4" />
                 </video>
-                {/* Light overlay to soften video */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/40 via-transparent to-[var(--charcoal)]/20" />
+                {/* Light overlay to soften video and hide watermark */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/50 via-transparent to-[var(--charcoal)]/20" />
               </div>
               {/* Video label */}
               <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
