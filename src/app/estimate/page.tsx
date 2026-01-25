@@ -164,15 +164,24 @@ function LandingPageContent(): ReactElement {
 }
 
 /**
- * Minimal header with logo and phone
+ * Header with logo, navigation, and phone
  */
 function Header({ source }: { source: string }): ReactElement {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const navLinks = [
+    { href: "/services", label: "Services" },
+    { href: "/about", label: "About" },
+    { href: "/faq", label: "FAQ" },
+    { href: "/contact", label: "Contact" },
+  ];
+
   return (
     <motion.header
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }}
-      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/80 via-black/50 to-transparent"
+      className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 via-black/70 to-black/50 backdrop-blur-sm"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
@@ -190,20 +199,75 @@ function Header({ source }: { source: string }): ReactElement {
           </span>
         </Link>
 
-        <a
-          href={`tel:${COMPANY.phone}`}
-          className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2.5 rounded-full text-white transition-all hover:scale-105"
-          onClick={() => trackEvent("phone_click", "Landing Page Header", source)}
-        >
-          <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center">
-            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-            </svg>
-          </div>
-          <span className="font-semibold hidden sm:block">{COMPANY.phone}</span>
-          <span className="font-semibold sm:hidden">Call Now</span>
-        </a>
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="text-white/80 hover:text-white font-medium transition-colors"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-4">
+          {/* Phone CTA */}
+          <a
+            href={`tel:${COMPANY.phone}`}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2.5 rounded-full text-white transition-all hover:scale-105"
+            onClick={() => trackEvent("phone_click", "Landing Page Header", source)}
+          >
+            <div className="w-8 h-8 bg-[var(--accent)] rounded-full flex items-center justify-center">
+              <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+            </div>
+            <span className="font-semibold hidden sm:block">{COMPANY.phone}</span>
+            <span className="font-semibold sm:hidden">Call</span>
+          </a>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            ) : (
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="lg:hidden bg-black/95 backdrop-blur-md border-t border-white/10"
+        >
+          <nav className="flex flex-col py-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-6 py-3 text-white/80 hover:text-white hover:bg-white/5 font-medium transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </motion.div>
+      )}
     </motion.header>
   );
 }
