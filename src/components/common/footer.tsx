@@ -3,9 +3,12 @@
  * @module components/common/footer
  */
 
+"use client";
+
 import { type ReactElement } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui";
 import {
   COMPANY,
@@ -19,8 +22,14 @@ import {
  * Footer component with editorial minimal styling.
  * Text-focused, no geometric placeholders.
  */
-export function Footer(): ReactElement {
+export function Footer(): ReactElement | null {
+  const pathname = usePathname();
   const currentYear = new Date().getFullYear();
+
+  // Hide footer on landing pages (e.g., /estimate)
+  if (pathname.startsWith("/estimate")) {
+    return null;
+  }
 
   return (
     <footer className="bg-[var(--charcoal)] text-white">

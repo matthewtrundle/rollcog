@@ -81,6 +81,31 @@ export function trackPhoneClick(): void {
 }
 
 /**
+ * Track landing page form submission with source parameter
+ * Used for Google Ads conversion tracking
+ * @param source - The ad campaign source (e.g., 'repair', 'flat-roof', 'industrial', 'general')
+ */
+export function trackLandingPageConversion(source: string): void {
+  if (typeof window !== "undefined" && window.gtag) {
+    // Track as generate_lead event for Google Ads
+    window.gtag("event", "generate_lead", {
+      event_category: "Lead",
+      event_label: source,
+      value: 100,
+      currency: "USD",
+    });
+  }
+
+  // Also track as a standard event
+  trackEvent("landing_page_conversion", "Landing Page", source, 100);
+
+  // Track Google Ads conversion if configured
+  if (process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID) {
+    trackConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID);
+  }
+}
+
+/**
  * Track CTA button click
  * @param location - Where the CTA was clicked (e.g., 'hero', 'footer')
  * @param ctaText - The text of the CTA button

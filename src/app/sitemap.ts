@@ -78,6 +78,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    // Google Ads landing page
+    {
+      url: `${BASE_URL}/estimate`,
+      lastModified: now,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
   ];
 
   // Generate insights post URLs dynamically

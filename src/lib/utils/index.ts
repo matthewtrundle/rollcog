@@ -14,6 +14,7 @@ export {
   trackFormSubmission,
   trackPhoneClick,
   trackCTAClick,
+  trackLandingPageConversion,
 } from "./analytics";
 
 /**

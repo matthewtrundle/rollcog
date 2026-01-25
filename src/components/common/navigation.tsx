@@ -23,7 +23,7 @@ import { NAV_LINKS } from "@/lib/utils/constants";
  * - Glassmorphism on scroll
  * - Animated mobile menu
  */
-export function Navigation(): ReactElement {
+export function Navigation(): ReactElement | null {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
@@ -40,6 +40,11 @@ export function Navigation(): ReactElement {
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  // Hide navigation on landing pages (e.g., /estimate)
+  if (pathname.startsWith("/estimate")) {
+    return null;
+  }
 
   return (
     <header

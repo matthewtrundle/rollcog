@@ -39,6 +39,11 @@ export const contactFormSchema = z.object({
     .string()
     .min(10, "Message must be at least 10 characters")
     .max(2000, "Message must be less than 2000 characters"),
+  // Source tracking for Google Ads campaigns
+  source: z
+    .string()
+    .max(50, "Source must be less than 50 characters")
+    .optional(),
 });
 
 export type ContactFormData = z.infer<typeof contactFormSchema>;
