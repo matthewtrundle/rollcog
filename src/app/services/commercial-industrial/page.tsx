@@ -158,7 +158,7 @@ export default function CommercialIndustrialPage(): ReactElement {
           </p>
           <div className="mt-8">
             <Link href="/contact">
-              <Button variant="primary" size="lg" showArrow>
+              <Button variant="primary" size="lg" showArrow trackingLabel="Commercial-Industrial CTA">
                 Get Free Estimate
               </Button>
             </Link>

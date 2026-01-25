@@ -148,7 +148,7 @@ export default function TPORoofingPage(): ReactElement {
           </p>
           <div className="mt-8">
             <Link href="/contact">
-              <Button variant="primary" size="lg" showArrow>
+              <Button variant="primary" size="lg" showArrow trackingLabel="TPO Service CTA">
                 Get Free Estimate
               </Button>
             </Link>

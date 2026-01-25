@@ -126,7 +126,7 @@ export default function ServicesPage(): ReactElement {
           </p>
           <div className="mt-8">
             <Link href="/contact">
-              <Button variant="primary" size="lg" showArrow>
+              <Button variant="primary" size="lg" showArrow trackingLabel="Services CTA">
                 Request Free Estimate
               </Button>
             </Link>

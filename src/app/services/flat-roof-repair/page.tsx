@@ -165,7 +165,7 @@ export default function FlatRoofRepairPage(): ReactElement {
           </p>
           <div className="mt-8">
             <Link href="/contact">
-              <Button variant="primary" size="lg" showArrow>
+              <Button variant="primary" size="lg" showArrow trackingLabel="Flat Roof Repair CTA">
                 Schedule Free Inspection
               </Button>
             </Link>
