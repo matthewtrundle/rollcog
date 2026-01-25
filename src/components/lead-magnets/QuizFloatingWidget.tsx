@@ -6,6 +6,7 @@
 "use client";
 
 import { type ReactElement, useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { LeadMagnetCard } from "./LeadMagnetCard";
 
@@ -16,17 +17,25 @@ interface QuizFloatingWidgetProps {
   source?: string;
 }
 
+// Pages where chatbot shows instead of quiz widget
+const CHATBOT_PAGES = ["/contact", "/about"];
+
 /**
  * Floating corner widget that promotes the roof inspection quiz.
  * Appears after a delay and can be dismissed or expanded.
+ * Hidden on Contact and About pages where chatbot is shown.
  */
 export function QuizFloatingWidget({
   delay = 5000,
   source = "floating-widget",
 }: QuizFloatingWidgetProps): ReactElement | null {
+  const pathname = usePathname();
   const [isVisible, setIsVisible] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
+
+  // Hide on pages where chatbot is shown
+  const isOnChatbotPage = CHATBOT_PAGES.some(page => pathname?.startsWith(page));
 
   useEffect(() => {
     // Check if user has already dismissed this session
@@ -49,7 +58,8 @@ export function QuizFloatingWidget({
     sessionStorage.setItem("quiz-widget-dismissed", "true");
   };
 
-  if (isDismissed) return null;
+  // Don't show on chatbot pages or if dismissed
+  if (isOnChatbotPage || isDismissed) return null;
 
   return (
     <AnimatePresence>

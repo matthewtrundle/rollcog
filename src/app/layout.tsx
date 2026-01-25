@@ -10,6 +10,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { Navigation } from "@/components/common/navigation";
 import { Footer } from "@/components/common/footer";
 import { ChatWidget } from "@/components/common/chat-widget";
+import { QuizFloatingWidget } from "@/components/lead-magnets";
 import { generateLocalBusinessSchema } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/utils/constants";
 import "./globals.css";
@@ -97,6 +98,7 @@ export default function RootLayout({
         <main id="main-content" className="flex-1 pt-16 lg:pt-20">{children}</main>
         <Footer />
         <ChatWidget />
+        <QuizFloatingWidget delay={8000} source="global" />
         <Analytics />
       </body>
     </html>
