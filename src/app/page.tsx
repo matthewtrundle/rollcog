@@ -127,13 +127,6 @@ function HeroSection(): ReactElement {
               variants={staggerContainer}
               className="relative z-10"
             >
-              <motion.p
-                variants={fadeInUp}
-                className="text-sm font-medium text-[var(--accent)] uppercase tracking-widest mb-6"
-              >
-                GAF Certified · {COMPANY.experience}+ Years Experience
-              </motion.p>
-
               <motion.h1
                 variants={fadeInUp}
                 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-semibold text-white leading-[1.1] tracking-tight"
@@ -191,16 +184,24 @@ function HeroSection(): ReactElement {
               </motion.div>
             </motion.div>
 
-            {/* Cinematic video container - right side */}
+            {/* Video container - right side */}
             <motion.div
               initial="hidden"
               animate="visible"
               variants={slideInRight}
               className="relative"
             >
-              {/* Ultra-wide aspect ratio container (2.39:1 IMAX) */}
+              {/* Credentials badge above video */}
+              <motion.p
+                variants={fadeInUp}
+                className="text-sm font-medium text-[var(--accent)] uppercase tracking-widest mb-4 lg:text-right"
+              >
+                GAF Certified · {COMPANY.experience}+ Years Experience
+              </motion.p>
+
+              {/* 16:9 aspect ratio for more height */}
               <motion.div
-                className="relative aspect-[2.39/1] rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
+                className="relative aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
                 style={{ scale: videoScale }}
               >
                 <video
