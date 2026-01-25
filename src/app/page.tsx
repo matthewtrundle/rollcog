@@ -338,8 +338,8 @@ function ServicesSection(): ReactElement {
             What We Do
           </motion.h2>
 
-          {/* Clean vertical text list */}
-          <div className="space-y-0 divide-y divide-white/15">
+          {/* Clean vertical text list with generous spacing */}
+          <div className="space-y-0">
             {SERVICES.map((service, index) => {
               const details = SERVICE_DETAILS[service.id];
               return (
@@ -347,28 +347,29 @@ function ServicesSection(): ReactElement {
                   key={service.id}
                   variants={fadeInUp}
                   custom={index}
+                  className={index > 0 ? "border-t border-white/10 mt-10 pt-10 lg:mt-12 lg:pt-12" : ""}
                 >
                   <Link
                     href={service.href}
-                    className="group block py-12 first:pt-0 last:pb-0"
+                    className="group block"
                     onMouseEnter={() => setHoveredService(service.id)}
                     onMouseLeave={() => setHoveredService(null)}
                   >
                     <div className="flex items-start justify-between gap-8">
-                      <div>
+                      <div className="space-y-5">
                         <h3 className="text-2xl lg:text-3xl font-medium text-white group-hover:text-[var(--accent)] transition-colors duration-300">
                           {service.name}
                         </h3>
-                        <p className="mt-4 text-white/70 leading-relaxed text-base lg:text-lg">
+                        <p className="text-white/70 leading-relaxed text-base lg:text-lg max-w-2xl">
                           {details?.description || service.description}
                         </p>
                         {/* Feature pills */}
                         {details?.features && (
-                          <div className="mt-5 flex flex-wrap gap-2.5">
+                          <div className="pt-3 flex flex-wrap gap-3">
                             {details.features.map((feature) => (
                               <span
                                 key={feature}
-                                className="text-xs text-white/50 border border-white/20 px-3 py-1.5 rounded-full"
+                                className="text-xs text-white/50 border border-white/15 px-4 py-2 rounded-full"
                               >
                                 {feature}
                               </span>
