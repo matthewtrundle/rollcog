@@ -9,6 +9,7 @@ import { z } from "zod";
  * Contact form validation schema.
  *
  * Validates name, email, phone, company, and message fields.
+ * Includes honeypot and timing fields for bot protection.
  */
 export const contactFormSchema = z.object({
   name: z
@@ -43,6 +44,16 @@ export const contactFormSchema = z.object({
   source: z
     .string()
     .max(50, "Source must be less than 50 characters")
+    .optional(),
+  // Bot protection: honeypot field (should be empty)
+  website: z
+    .string()
+    .max(0, "Bot detected")
+    .optional()
+    .or(z.literal("")),
+  // Bot protection: timestamp when form was loaded
+  formLoadedAt: z
+    .number()
     .optional(),
 });
 

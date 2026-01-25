@@ -12,7 +12,7 @@
 
 "use client";
 
-import { type ReactElement, useState, useEffect, Suspense } from "react";
+import { type ReactElement, useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -240,6 +240,12 @@ function HeroSection({
  */
 function LandingPageForm({ source }: { source: string }): ReactElement {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const formLoadedAt = useRef<number>(Date.now());
+
+  // Track when form was loaded for bot detection
+  useEffect(() => {
+    formLoadedAt.current = Date.now();
+  }, []);
 
   const {
     register,
@@ -259,6 +265,7 @@ function LandingPageForm({ source }: { source: string }): ReactElement {
         body: JSON.stringify({
           ...data,
           source, // Include source for tracking
+          formLoadedAt: formLoadedAt.current, // Bot detection
         }),
       });
 
@@ -328,7 +335,7 @@ function LandingPageForm({ source }: { source: string }): ReactElement {
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 relative">
         <div>
           <input
             type="text"
@@ -375,6 +382,18 @@ function LandingPageForm({ source }: { source: string }): ReactElement {
           {errors.message && (
             <p className="text-xs text-red-500 mt-1">{errors.message.message}</p>
           )}
+        </div>
+
+        {/* Honeypot field - hidden from humans, bots will fill it */}
+        <div className="absolute -left-[9999px] opacity-0" aria-hidden="true">
+          <label htmlFor="lp-website">Website</label>
+          <input
+            type="text"
+            id="lp-website"
+            {...register("website")}
+            tabIndex={-1}
+            autoComplete="off"
+          />
         </div>
 
         <Button

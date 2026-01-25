@@ -5,7 +5,7 @@
  * @module features/contact/components/contact-form
  */
 
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui";
@@ -50,6 +50,12 @@ const inputStyles = "w-full rounded-[12px] border border-[var(--border-warm)] bg
  */
 export function ContactForm(): ReactElement {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
+  const formLoadedAt = useRef<number>(Date.now());
+
+  // Track when form was loaded for bot detection
+  useEffect(() => {
+    formLoadedAt.current = Date.now();
+  }, []);
 
   const {
     register,
@@ -63,10 +69,16 @@ export function ContactForm(): ReactElement {
 
   const onSubmit = async (data: ContactFormData): Promise<void> => {
     try {
+      // Add form load timestamp for bot detection
+      const submitData = {
+        ...data,
+        formLoadedAt: formLoadedAt.current,
+      };
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(submitData),
       });
 
       if (!response.ok) {
@@ -117,7 +129,7 @@ export function ContactForm(): ReactElement {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 relative">
       {submitStatus === "error" && (
         <div className="rounded-[12px] bg-[var(--accent)]/10 border border-[var(--accent)] p-4">
           <p className="text-sm text-[var(--accent)]">
@@ -189,6 +201,18 @@ export function ContactForm(): ReactElement {
           placeholder="Tell us about your roofing project..."
         />
       </FormField>
+
+      {/* Honeypot field - hidden from humans, bots will fill it */}
+      <div className="absolute -left-[9999px] opacity-0" aria-hidden="true">
+        <label htmlFor="website">Website</label>
+        <input
+          type="text"
+          id="website"
+          {...register("website")}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
 
       <Button
         type="submit"

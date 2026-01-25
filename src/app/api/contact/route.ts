@@ -18,6 +18,9 @@ import {
  * Validates the form data and sends a professional email via Resend.
  * Returns success/error response.
  */
+// Minimum time (in ms) a human would take to fill out the form
+const MIN_FORM_TIME_MS = 3000; // 3 seconds
+
 export async function POST(request: Request): Promise<NextResponse> {
   try {
     const body: unknown = await request.json();
@@ -31,7 +34,30 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    const { name, email, phone, company, service, message, source } = result.data;
+    const { name, email, phone, company, service, message, source, website, formLoadedAt } = result.data;
+
+    // Bot protection: Check honeypot field
+    if (website && website.length > 0) {
+      console.log("Bot detected: honeypot field filled");
+      // Return success to not reveal detection (bots will think it worked)
+      return NextResponse.json({
+        success: true,
+        message: "Message sent successfully",
+      });
+    }
+
+    // Bot protection: Check if form was submitted too quickly
+    if (formLoadedAt) {
+      const timeToSubmit = Date.now() - formLoadedAt;
+      if (timeToSubmit < MIN_FORM_TIME_MS) {
+        console.log(`Bot detected: form submitted in ${timeToSubmit}ms (too fast)`);
+        // Return success to not reveal detection
+        return NextResponse.json({
+          success: true,
+          message: "Message sent successfully",
+        });
+      }
+    }
 
     // Check for Resend API key
     const resendApiKey = process.env.RESEND_API_KEY;
