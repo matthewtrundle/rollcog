@@ -53,10 +53,6 @@ export function ChatWidget(): ReactElement | null {
   const showChatbotPages = ["/contact", "/about"];
   const shouldShow = showChatbotPages.some(page => pathname?.startsWith(page));
 
-  if (!shouldShow) {
-    return null;
-  }
-
   // Play notification sound
   const playNotificationSound = useCallback(() => {
     if (audioRef.current) {
@@ -69,7 +65,7 @@ export function ChatWidget(): ReactElement | null {
 
   // Show greeting bubble after 4 seconds (only once per session)
   useEffect(() => {
-    if (hasInteracted) return;
+    if (!shouldShow || hasInteracted) return;
 
     const timer = setTimeout(() => {
       if (!isOpen && !hasInteracted) {
@@ -79,12 +75,18 @@ export function ChatWidget(): ReactElement | null {
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, [isOpen, hasInteracted, playNotificationSound]);
+  }, [shouldShow, isOpen, hasInteracted, playNotificationSound]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
+    if (!shouldShow) return;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [shouldShow, messages]);
+
+  // Don't render if not on a chatbot page
+  if (!shouldShow) {
+    return null;
+  }
 
   const handleOpenChat = (): void => {
     setIsOpen(true);
