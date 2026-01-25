@@ -441,7 +441,7 @@ function ServicesSection(): ReactElement {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-6 left-6 right-6">
-                  <p className="text-sm text-gray-300">
+                  <p className="text-sm text-white/70">
                     Hover over a service to see more
                   </p>
                 </div>

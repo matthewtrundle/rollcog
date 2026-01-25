@@ -52,7 +52,7 @@ export default function ContactPage(): ReactElement {
           </motion.h1>
           <motion.p
             variants={fadeInUp}
-            className="mt-6 text-xl text-gray-300 max-w-2xl mx-auto"
+            className="mt-6 text-xl text-white/70 max-w-2xl mx-auto"
           >
             Tell us about your project and we&apos;ll get back to you within 24 hours
             with a detailed quote.

@@ -31,7 +31,7 @@ export function Footer(): ReactElement {
             <div className="lg:col-span-1">
               <Link
                 href="/"
-                className="inline-flex items-center gap-3"
+                className="inline-flex items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--charcoal)]"
               >
                 <Image
                   src="/logo.png"
@@ -42,7 +42,7 @@ export function Footer(): ReactElement {
                 />
                 <span className="text-xl font-bold text-white">ROLLCOG</span>
               </Link>
-              <p className="mt-6 text-sm text-white/60 leading-relaxed">
+              <p className="mt-6 text-sm text-white/70 leading-relaxed">
                 GAF Certified commercial roofing contractors with{" "}
                 {COMPANY.experience} years of experience serving Chicagoland and
                 beyond.
@@ -59,7 +59,7 @@ export function Footer(): ReactElement {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-white/80 hover:text-white transition-colors"
+                      className="text-sm text-white/80 hover:text-white transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--charcoal)]"
                     >
                       {link.label}
                     </Link>
@@ -78,7 +78,7 @@ export function Footer(): ReactElement {
                   <li key={service.id}>
                     <Link
                       href={service.href}
-                      className="text-sm text-white/80 hover:text-white transition-colors"
+                      className="text-sm text-white/80 hover:text-white transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--charcoal)]"
                     >
                       {service.shortName}
                     </Link>
@@ -93,7 +93,7 @@ export function Footer(): ReactElement {
                 Contact
               </h3>
               <div className="space-y-4 text-sm">
-                <address className="text-white/60 not-italic">
+                <address className="text-white/70 not-italic">
                   {COMPANY.address.street}
                   <br />
                   {COMPANY.address.city}, {COMPANY.address.state}{" "}
@@ -111,7 +111,7 @@ export function Footer(): ReactElement {
                 <h3 className="text-xs font-medium uppercase tracking-wider text-white/50 mb-4">
                   Certifications
                 </h3>
-                <p className="text-sm text-white/60">
+                <p className="text-sm text-white/70">
                   {CERTIFICATIONS.map((cert) => cert.name).join(" · ")}
                 </p>
               </div>
@@ -121,7 +121,7 @@ export function Footer(): ReactElement {
                 <h3 className="text-xs font-medium uppercase tracking-wider text-white/50 mb-4">
                   Service Areas
                 </h3>
-                <p className="text-sm text-white/60">
+                <p className="text-sm text-white/70">
                   {[...SERVICE_AREAS.primary, ...SERVICE_AREAS.extended].join(
                     " · "
                   )}
@@ -140,13 +140,13 @@ export function Footer(): ReactElement {
             <div className="flex gap-6">
               <Link
                 href="/privacy"
-                className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                className="text-sm text-white/50 hover:text-white/80 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--charcoal)]"
               >
                 Privacy
               </Link>
               <Link
                 href="/terms"
-                className="text-sm text-white/50 hover:text-white/80 transition-colors"
+                className="text-sm text-white/50 hover:text-white/80 transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--charcoal)]"
               >
                 Terms
               </Link>

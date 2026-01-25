@@ -89,7 +89,7 @@ export default function FAQPage(): ReactElement {
           <h1 className="heading-hero">
             Frequently Asked Questions
           </h1>
-          <p className="mt-6 text-xl text-gray-300">
+          <p className="mt-6 text-xl text-white/70">
             Find answers to common questions about our commercial roofing
             services. Can&apos;t find what you&apos;re looking for? Contact us directly.
           </p>

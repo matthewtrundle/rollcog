@@ -10,6 +10,14 @@ import { Button, Section } from "@/components/ui";
 import { COMPANY, CERTIFICATIONS } from "@/lib/utils/constants";
 import { generatePageMetadata } from "@/lib/seo";
 
+// Certification badge colors
+const CERT_COLORS: Record<string, string> = {
+  "GAF Master Commercial": "bg-blue-900",
+  "GAF Authorized": "bg-blue-800",
+  "Goldman Sachs 10,000 Small Businesses": "bg-slate-800",
+  "OSHA Training Institute": "bg-green-800",
+};
+
 export const metadata: Metadata = generatePageMetadata({
   title: "About Us",
   description: `${COMPANY.name} - ${COMPANY.experience}+ years of commercial roofing excellence. GAF Certified contractors serving Chicago and the Midwest with quality workmanship.`,
@@ -31,7 +39,7 @@ export default function AboutPage(): ReactElement {
               <br />
               <span className="text-[var(--accent)]">Getting It Right</span>
             </h1>
-            <p className="mt-8 text-xl text-gray-300 leading-relaxed">
+            <p className="mt-8 text-xl text-white/70 leading-relaxed">
               Since {COMPANY.founded}, we&apos;ve built our reputation on a
               simple principle: do quality work at fair prices, and treat every
               building like it&apos;s our own.
@@ -106,7 +114,7 @@ export default function AboutPage(): ReactElement {
 
           {/* Values Content Side */}
           <div className="lg:col-span-7 order-1 lg:order-2">
-            <p className="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">
+            <p className="text-sm font-medium text-white/60 uppercase tracking-wider mb-4">
               What We Believe
             </p>
             <h2 className="heading-section mb-10">Our Values</h2>
@@ -135,7 +143,7 @@ export default function AboutPage(): ReactElement {
                     <h3 className="text-lg font-semibold text-white mb-2">
                       {value.title}
                     </h3>
-                    <p className="text-gray-400 leading-relaxed text-sm">
+                    <p className="text-white/60 leading-relaxed text-sm">
                       {value.description}
                     </p>
                   </div>
@@ -146,34 +154,55 @@ export default function AboutPage(): ReactElement {
         </div>
       </Section>
 
-      {/* Certifications - Simple text list */}
-      <Section variant="cream" padding="lg">
-        <div className="max-w-4xl">
-          <div className="grid gap-8 md:grid-cols-2 items-start">
-            <div>
-              <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">
-                Credentials
-              </p>
-              <h2 className="heading-section text-[var(--foreground)]">
-                Certifications
-              </h2>
-            </div>
-            <div className="space-y-4">
-              {CERTIFICATIONS.map((cert) => (
-                <div
-                  key={cert.name}
-                  className="py-4 border-b border-[var(--border)] last:border-b-0"
-                >
-                  <p className="font-medium text-[var(--foreground)]">
-                    {cert.name}
-                  </p>
-                  <p className="mt-1 text-sm text-[var(--text-muted)]">
-                    {cert.description}
-                  </p>
+      {/* Certifications - With badge images */}
+      <Section variant="cream" padding="xl">
+        <div className="text-center mb-12">
+          <p className="text-sm font-medium text-[var(--text-muted)] uppercase tracking-wider mb-4">
+            Credentials
+          </p>
+          <h2 className="heading-section text-[var(--foreground)]">
+            Our Certifications
+          </h2>
+        </div>
+
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+          {CERTIFICATIONS.map((cert) => (
+              <div
+                key={cert.name}
+                className="bg-white rounded-2xl p-6 shadow-lg border border-[var(--border)] text-center hover:shadow-xl transition-shadow"
+              >
+                {/* Badge placeholder */}
+                <div className={`w-24 h-24 mx-auto rounded-full ${CERT_COLORS[cert.name] || 'bg-gray-800'} flex items-center justify-center mb-6 shadow-md`}>
+                  {cert.name.includes("GAF") ? (
+                    <div className="text-white text-center">
+                      <p className="text-xs font-bold">GAF</p>
+                      <p className="text-[10px]">CERTIFIED</p>
+                    </div>
+                  ) : cert.name.includes("Goldman") ? (
+                    <div className="text-white text-center">
+                      <p className="text-[10px] font-bold">GOLDMAN</p>
+                      <p className="text-[10px]">SACHS</p>
+                      <p className="text-[8px]">10K</p>
+                    </div>
+                  ) : cert.name.includes("OSHA") ? (
+                    <div className="text-white text-center">
+                      <p className="text-sm font-bold">OSHA</p>
+                      <p className="text-[8px]">CERTIFIED</p>
+                    </div>
+                  ) : (
+                    <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                    </svg>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
+                <h3 className="font-semibold text-[var(--foreground)] mb-2">
+                  {cert.name}
+                </h3>
+                <p className="text-sm text-[var(--text-muted)] leading-relaxed">
+                  {cert.description}
+                </p>
+              </div>
+          ))}
         </div>
       </Section>
 
@@ -181,7 +210,7 @@ export default function AboutPage(): ReactElement {
       <Section variant="charcoal" padding="lg">
         <div className="max-w-2xl">
           <h2 className="heading-section">Ready to work together?</h2>
-          <p className="mt-4 text-lg text-gray-300">
+          <p className="mt-4 text-lg text-white/70">
             Contact our team to discuss your commercial roofing needs.
           </p>
           <div className="mt-8">

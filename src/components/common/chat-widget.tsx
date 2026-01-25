@@ -133,8 +133,8 @@ export function ChatWidget(): ReactElement {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
-            style={{ height: "500px", maxHeight: "calc(100vh - 150px)" }}
+            className="fixed bottom-24 right-4 sm:right-6 z-50 w-[calc(100vw-2rem)] sm:w-[380px] max-w-[380px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col"
+            style={{ height: "min(500px, calc(100vh - 150px))" }}
           >
             {/* Header */}
             <div className="bg-[var(--charcoal)] text-white px-4 py-3 flex items-center gap-3">
@@ -189,15 +189,17 @@ export function ChatWidget(): ReactElement {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Ask about roofing..."
+                  aria-label="Type your roofing question"
                   className="flex-1 px-4 py-2.5 text-sm bg-gray-100 rounded-full border-0 focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:bg-white transition-colors"
                   disabled={isLoading}
                 />
                 <button
                   type="submit"
                   disabled={isLoading || !input.trim()}
+                  aria-label="Send message"
                   className="w-10 h-10 bg-[var(--accent)] text-white rounded-full flex items-center justify-center hover:bg-[var(--accent-dark)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                   </svg>
                 </button>

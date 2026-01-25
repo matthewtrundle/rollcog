@@ -96,7 +96,7 @@ export function Navigation(): ReactElement {
           {/* Mobile Menu Button */}
           <button
             type="button"
-            className="lg:hidden relative w-10 h-10 flex items-center justify-center"
+            className="lg:hidden relative w-10 h-10 flex items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]"
             onClick={() => setIsOpen(!isOpen)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
@@ -154,7 +154,7 @@ export function Navigation(): ReactElement {
                     <Link
                       href={link.href}
                       className={cn(
-                        "block px-4 py-3 text-lg font-semibold tracking-wide rounded-xl transition-all duration-200",
+                        "block px-4 py-3 text-lg font-semibold tracking-wide rounded-xl transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]",
                         pathname === link.href
                           ? "bg-white/10 text-white"
                           : "text-white/70 hover:bg-white/5 hover:text-white hover:pl-6"
@@ -201,7 +201,7 @@ function NavLink({
   return (
     <Link
       href={href}
-      className="relative px-4 py-2 text-xs font-semibold uppercase tracking-wider group"
+      className="relative px-4 py-2 text-xs font-semibold uppercase tracking-wider group rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0f172a]"
     >
       <span
         className={cn(
