@@ -17,13 +17,13 @@ interface QuizFloatingWidgetProps {
   source?: string;
 }
 
-// Pages where chatbot shows instead of quiz widget
-const CHATBOT_PAGES = ["/contact", "/about"];
+// Pages where the quiz widget should NOT show
+const HIDDEN_PAGES = ["/contact", "/about", "/admin"];
 
 /**
  * Floating corner widget that promotes the roof inspection quiz.
  * Appears after a delay and can be dismissed or expanded.
- * Hidden on Contact and About pages where chatbot is shown.
+ * Hidden on admin, contact, and about pages.
  */
 export function QuizFloatingWidget({
   delay = 5000,
@@ -34,8 +34,8 @@ export function QuizFloatingWidget({
   const [isExpanded, setIsExpanded] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
-  // Hide on pages where chatbot is shown
-  const isOnChatbotPage = CHATBOT_PAGES.some(page => pathname?.startsWith(page));
+  // Hide on certain pages (admin, contact, about)
+  const shouldHide = HIDDEN_PAGES.some(page => pathname?.startsWith(page));
 
   useEffect(() => {
     // Check if user has already dismissed this session
@@ -58,8 +58,8 @@ export function QuizFloatingWidget({
     sessionStorage.setItem("quiz-widget-dismissed", "true");
   };
 
-  // Don't show on chatbot pages or if dismissed
-  if (isOnChatbotPage || isDismissed) return null;
+  // Don't show on hidden pages or if dismissed
+  if (shouldHide || isDismissed) return null;
 
   return (
     <AnimatePresence>

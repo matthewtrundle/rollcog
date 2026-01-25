@@ -120,7 +120,7 @@ export default function AdminLayout({ children }: AdminLayoutProps): ReactElemen
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                       isActive
                         ? "bg-gray-700 text-white"
-                        : "text-white/80 hover:text-white hover:bg-gray-700/50"
+                        : "text-white hover:bg-gray-700/50"
                     }`}
                   >
                     <NavIcon icon={item.icon} className="w-5 h-5" />
@@ -184,7 +184,7 @@ export default function AdminLayout({ children }: AdminLayoutProps): ReactElemen
                       className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                         isActive
                           ? "bg-gray-700 text-white"
-                          : "text-white/80 hover:text-white hover:bg-gray-700/50"
+                          : "text-white hover:bg-gray-700/50"
                       }`}
                     >
                       <NavIcon icon={item.icon} className="w-5 h-5" />
