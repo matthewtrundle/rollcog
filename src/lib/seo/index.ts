@@ -3,10 +3,17 @@
  * @module lib/seo
  */
 
-export { generatePageMetadata, generateServiceMetadata } from "./metadata";
+export {
+  generatePageMetadata,
+  generateServiceMetadata,
+  generateBlogPostMetadata,
+  generateBlogListMetadata,
+} from "./metadata";
 export {
   generateLocalBusinessSchema,
   generateServiceSchema,
   generateFAQSchema,
   generateBreadcrumbSchema,
+  generateBlogPostingSchema,
+  generateBlogListSchema,
 } from "./json-ld";

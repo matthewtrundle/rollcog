@@ -4,6 +4,7 @@
  */
 
 import type { MetadataRoute } from "next";
+import { getAllSlugs } from "@/features/blog";
 
 const BASE_URL = "https://rollcog.com";
 
@@ -70,7 +71,23 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
+    // Blog listing page
+    {
+      url: `${BASE_URL}/blog`,
+      lastModified: now,
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
   ];
 
-  return staticPages;
+  // Generate blog post URLs dynamically
+  const blogSlugs = getAllSlugs();
+  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${BASE_URL}/blog/${slug}`,
+    lastModified: now,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...blogPages];
 }

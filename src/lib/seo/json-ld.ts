@@ -154,3 +154,120 @@ export function generateBreadcrumbSchema(
     })),
   };
 }
+
+interface BlogPostSchemaOptions {
+  title: string;
+  description: string;
+  slug: string;
+  publishedAt: string;
+  author: { name: string; role: string };
+  featuredImage?: { src: string; alt: string };
+  keywords: string[];
+}
+
+/**
+ * Generates BlogPosting JSON-LD structured data for individual posts.
+ *
+ * @param options - Blog post schema options
+ * @returns BlogPosting schema object
+ */
+export function generateBlogPostingSchema({
+  title,
+  description,
+  slug,
+  publishedAt,
+  author,
+  featuredImage,
+  keywords,
+}: BlogPostSchemaOptions): object {
+  const url = `${SITE_CONFIG.url}/blog/${slug}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: title,
+    description,
+    url,
+    datePublished: publishedAt,
+    dateModified: publishedAt,
+    author: {
+      "@type": "Person",
+      name: author.name,
+      jobTitle: author.role,
+      worksFor: {
+        "@type": "Organization",
+        name: COMPANY.name,
+      },
+    },
+    publisher: {
+      "@type": "Organization",
+      name: COMPANY.name,
+      url: SITE_CONFIG.url,
+      logo: {
+        "@type": "ImageObject",
+        url: `${SITE_CONFIG.url}/logo.png`,
+      },
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
+    ...(featuredImage && {
+      image: {
+        "@type": "ImageObject",
+        url: featuredImage.src.startsWith("http")
+          ? featuredImage.src
+          : `${SITE_CONFIG.url}${featuredImage.src}`,
+        caption: featuredImage.alt,
+      },
+    }),
+    keywords: keywords.join(", "),
+    about: {
+      "@type": "Thing",
+      name: "Commercial Roofing",
+    },
+    isPartOf: {
+      "@type": "Blog",
+      name: `${COMPANY.name} Blog`,
+      url: `${SITE_CONFIG.url}/blog`,
+    },
+  };
+}
+
+interface BlogListSchemaOptions {
+  posts: Array<{
+    title: string;
+    slug: string;
+    publishedAt: string;
+    excerpt: string;
+  }>;
+}
+
+/**
+ * Generates Blog collection JSON-LD structured data for the listing page.
+ *
+ * @param options - Blog list schema options
+ * @returns Blog schema object
+ */
+export function generateBlogListSchema({ posts }: BlogListSchemaOptions): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: `${COMPANY.name} Commercial Roofing Blog`,
+    description:
+      "Expert insights on commercial roofing systems, maintenance tips, and industry news from Chicago's trusted roofing professionals.",
+    url: `${SITE_CONFIG.url}/blog`,
+    publisher: {
+      "@type": "Organization",
+      name: COMPANY.name,
+      url: SITE_CONFIG.url,
+    },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt,
+      url: `${SITE_CONFIG.url}/blog/${post.slug}`,
+      datePublished: post.publishedAt,
+    })),
+  };
+}

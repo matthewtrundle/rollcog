@@ -93,3 +93,98 @@ export function generateServiceMetadata(
     path,
   });
 }
+
+interface BlogPostMetadataOptions {
+  metaTitle: string;
+  description: string;
+  slug: string;
+  publishedAt: string;
+  keywords: string[];
+  featuredImage?: { src: string; alt: string };
+}
+
+/**
+ * Generates metadata for blog posts with article-specific OpenGraph tags.
+ *
+ * @param options - Blog post metadata options
+ * @returns Next.js Metadata object optimized for articles
+ *
+ * @example
+ * ```tsx
+ * export const metadata = generateBlogPostMetadata({
+ *   metaTitle: "TPO vs EPDM: Which Roofing System is Right?",
+ *   description: "Compare TPO and EPDM roofing systems...",
+ *   slug: "tpo-vs-epdm-commercial-roofing",
+ *   publishedAt: "2024-01-15",
+ *   keywords: ["TPO roofing", "EPDM roofing"]
+ * });
+ * ```
+ */
+export function generateBlogPostMetadata({
+  metaTitle,
+  description,
+  slug,
+  publishedAt,
+  keywords,
+  featuredImage,
+}: BlogPostMetadataOptions): Metadata {
+  const url = `${SITE_CONFIG.url}/blog/${slug}`;
+  const fullTitle = `${metaTitle} | ${COMPANY.name}`;
+
+  return {
+    title: fullTitle,
+    description,
+    keywords: [...keywords, ...SITE_CONFIG.keywords],
+    authors: [{ name: COMPANY.name }],
+    creator: COMPANY.name,
+    publisher: COMPANY.name,
+    robots: "index, follow",
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title: fullTitle,
+      description,
+      url,
+      siteName: COMPANY.name,
+      locale: "en_US",
+      type: "article",
+      publishedTime: publishedAt,
+      authors: [COMPANY.name],
+      ...(featuredImage && {
+        images: [
+          {
+            url: featuredImage.src.startsWith("http")
+              ? featuredImage.src
+              : `${SITE_CONFIG.url}${featuredImage.src}`,
+            alt: featuredImage.alt,
+            width: 1200,
+            height: 630,
+          },
+        ],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
+      ...(featuredImage && {
+        images: [featuredImage.src],
+      }),
+    },
+  };
+}
+
+/**
+ * Generates metadata for the blog listing page.
+ *
+ * @returns Next.js Metadata object for the blog index
+ */
+export function generateBlogListMetadata(): Metadata {
+  return generatePageMetadata({
+    title: "Commercial Roofing Blog",
+    description:
+      "Expert insights on commercial roofing systems, maintenance tips, and industry news. Learn about TPO, EPDM, modified bitumen, and flat roof care from Chicago's trusted roofing professionals.",
+    path: "/blog",
+  });
+}
