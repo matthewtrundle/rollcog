@@ -14,15 +14,32 @@ interface ChatMessage {
   content: string;
 }
 
+// Engaging opening facts to hook visitors
+const OPENING_FACTS = [
+  "Did you know? A single roof leak can cause $10,000+ in water damage before you even notice it. When did you last have yours inspected?",
+  "Fun fact: White TPO roofing can reduce your cooling costs by up to 30%. Curious if it's right for your building?",
+  "Here's something most people don't know: 40% of commercial roof failures happen in the first 5 years due to poor installation. We've been doing this for 27+ years.",
+  "Quick fact: The average commercial roof replacement pays for itself in energy savings within 7 years. Want to know what yours could save?",
+  "Did you know? Most roof warranties are voided by skipping annual inspections. When was your last one?",
+  "Interesting: A well-maintained flat roof can last 25+ years. A neglected one? Maybe 10. Which category is yours in?",
+  "Here's a costly mistake we see often: Waiting until a leak appears. By then, the damage underneath is usually 10x worse. Got questions about prevention?",
+  "Pro tip: The best time to replace a roof is before it fails. The worst time? During a rainstorm with inventory at risk. How's your roof holding up?",
+];
+
+function getRandomOpeningMessage(): string {
+  const randomIndex = Math.floor(Math.random() * OPENING_FACTS.length);
+  return OPENING_FACTS[randomIndex];
+}
+
 export function ChatWidget(): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
+  const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: "welcome",
       role: "assistant",
-      content: "Hi! I'm Rollcog's roofing expert. I can help answer questions about commercial roofing, TPO systems, flat roof repairs, and more. How can I assist you today?",
+      content: getRandomOpeningMessage(),
     },
   ]);
   const [input, setInput] = useState("");
@@ -197,9 +214,9 @@ export function ChatWidget(): ReactElement {
               onClick={handleOpenChat}
             >
               <p className="text-gray-800 text-sm leading-relaxed">
-                Hi there! <span className="inline-block animate-wave">👋</span> Welcome to Rollcog!
+                <span className="inline-block animate-wave">👋</span> Quick question...
                 <br />
-                <span className="text-gray-600">Got questions about commercial roofing?</span>
+                <span className="text-gray-600">When was your roof last inspected?</span>
               </p>
             </div>
 
