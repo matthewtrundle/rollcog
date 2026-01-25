@@ -38,8 +38,11 @@ export function ChatWidget(): ReactElement | null {
   const [showGreeting, setShowGreeting] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
 
-  // Hide chatbot on landing pages where quiz widget is shown
-  if (pathname?.startsWith("/estimate")) {
+  // Only show chatbot on Contact and About pages
+  const showChatbotPages = ["/contact", "/about"];
+  const shouldShow = showChatbotPages.some(page => pathname?.startsWith(page));
+
+  if (!shouldShow) {
     return null;
   }
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
