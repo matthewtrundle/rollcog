@@ -7,7 +7,6 @@
  */
 
 import { NextResponse } from "next/server";
-import { createHmac } from "crypto";
 
 // Vercel Analytics Web Vitals event type
 interface WebVitalsEvent {
@@ -50,19 +49,6 @@ interface CustomEvent {
 }
 
 type AnalyticsEvent = WebVitalsEvent | PageViewEvent | CustomEvent;
-
-/**
- * Verify the request signature from Vercel
- */
-function verifySignature(payload: string, signature: string | null, secret: string): boolean {
-  if (!signature || !secret) return true; // Skip if no secret configured
-
-  const hmac = createHmac("sha256", secret);
-  hmac.update(payload);
-  const expectedSignature = hmac.digest("hex");
-
-  return signature === expectedSignature;
-}
 
 /**
  * Insert analytics event into PostgreSQL
@@ -133,15 +119,7 @@ async function insertEvent(event: AnalyticsEvent): Promise<void> {
  */
 export async function POST(request: Request): Promise<NextResponse> {
   try {
-    const signature = request.headers.get("x-vercel-signature");
     const payload = await request.text();
-
-    // Verify signature if secret is configured
-    const secret = process.env.ANALYTICS_DRAIN_SECRET;
-    if (secret && !verifySignature(payload, signature, secret)) {
-      console.error("Invalid signature");
-      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-    }
 
     // Parse the events (Vercel sends an array)
     const events: AnalyticsEvent[] = JSON.parse(payload);
