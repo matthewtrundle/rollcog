@@ -6,21 +6,11 @@
 import { streamText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 
-// Use Vercel AI Gateway in production, OpenRouter for local development
-const isProduction = process.env.VERCEL === '1';
-
-const aiProvider = isProduction
-  ? createOpenAI({
-      baseURL: 'https://api.vercel.ai/v1',
-      apiKey: process.env.VERCEL_AI_GATEWAY_API_KEY,
-    })
-  : createOpenAI({
-      baseURL: 'https://openrouter.ai/api/v1',
-      apiKey: process.env.OPENROUTER_API_KEY,
-    });
-
-// Model name differs between providers
-const modelName = isProduction ? 'gpt-4o-mini' : 'openai/gpt-4o-mini';
+// Use OpenRouter for AI model access
+const openrouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY,
+});
 
 // System prompt for the roofing expert
 const SYSTEM_PROMPT = `You are an expert commercial roofing consultant for Rollcog Roofs, a GAF-certified commercial roofing contractor with 27+ years of experience based in Oak Brook, Illinois.
@@ -55,7 +45,7 @@ export async function POST(req: Request): Promise<Response> {
     const { messages } = await req.json();
 
     const result = streamText({
-      model: aiProvider(modelName),
+      model: openrouter('openai/gpt-4o-mini'),
       system: SYSTEM_PROMPT,
       messages,
     });
