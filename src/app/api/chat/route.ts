@@ -42,6 +42,15 @@ Guidelines:
 
 export async function POST(req: Request): Promise<Response> {
   try {
+    // Validate API key is present
+    if (!process.env.OPENROUTER_API_KEY) {
+      console.error('OPENROUTER_API_KEY is not set');
+      return new Response(
+        JSON.stringify({ error: 'Chat service not configured' }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     const { messages } = await req.json();
 
     const result = streamText({

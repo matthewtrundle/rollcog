@@ -100,7 +100,11 @@ export function ChatWidget(): ReactElement {
         }),
       });
 
-      if (!response.ok) throw new Error("Failed to get response");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Chat API error response:", response.status, errorText);
+        throw new Error(`API error: ${response.status}`);
+      }
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -119,7 +123,7 @@ export function ChatWidget(): ReactElement {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const chunk = decoder.decode(value);
+          const chunk = decoder.decode(value, { stream: true });
           assistantContent += chunk;
 
           setMessages((prev) =>
@@ -130,6 +134,17 @@ export function ChatWidget(): ReactElement {
             )
           );
         }
+      }
+
+      // If we got no content, show an error
+      if (!assistantContent.trim()) {
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantMessage.id
+              ? { ...m, content: "I apologize, but I received an empty response. Please try again." }
+              : m
+          )
+        );
       }
     } catch (error) {
       console.error("Chat error:", error);
