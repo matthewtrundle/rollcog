@@ -9,6 +9,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Section } from "@/components/ui";
+import { BlogLeadMagnet } from "@/components/lead-magnets";
 import {
   BlogPostContent,
   BlogCTA,
@@ -125,6 +126,14 @@ export default async function BlogPostPage({ params }: PageProps): Promise<React
           category={post.category}
           readingTime={post.readingTime}
         />
+
+        {/* Lead Magnet */}
+        <div className="max-w-3xl mx-auto">
+          <BlogLeadMagnet
+            variant={post.category === "maintenance" ? "maintenance-guide" : "both"}
+            articleSlug={post.slug}
+          />
+        </div>
 
         {/* CTA */}
         <div className="max-w-3xl mx-auto">

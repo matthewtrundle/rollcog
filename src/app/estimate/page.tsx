@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, useScroll, useTransform, type Variants, useInView } from "framer-motion";
 import { Button } from "@/components/ui";
+import { LeadMagnetCard } from "@/components/lead-magnets";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
 import { COMPANY } from "@/lib/utils/constants";
 import { trackEvent } from "@/lib/utils";
@@ -152,6 +153,9 @@ function LandingPageContent(): ReactElement {
 
       {/* Testimonials */}
       <TestimonialsSection />
+
+      {/* Lead Magnet Section */}
+      <LeadMagnetSection source={source} />
 
       {/* Final CTA */}
       <FinalCTASection source={source} />
@@ -797,6 +801,54 @@ function TestimonialsSection(): ReactElement {
               </div>
             </motion.div>
           ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * Lead magnet section - secondary CTA for visitors not ready to convert
+ */
+function LeadMagnetSection({ source }: { source: string }): ReactElement {
+  return (
+    <section className="bg-[var(--charcoal)] py-16 border-t border-white/5">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="text-center mb-10"
+        >
+          <motion.p
+            variants={fadeInUp}
+            className="text-sm font-medium text-white/50 uppercase tracking-wider mb-3"
+          >
+            Not Ready to Talk Yet?
+          </motion.p>
+          <motion.h2
+            variants={fadeInUp}
+            className="text-2xl lg:text-3xl font-bold text-white"
+            style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
+          >
+            Get Our Free Inspection Resources
+          </motion.h2>
+        </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+          className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto"
+        >
+          <motion.div variants={fadeInUp}>
+            <LeadMagnetCard variant="quiz" source={source} />
+          </motion.div>
+          <motion.div variants={fadeInUp}>
+            <LeadMagnetCard variant="maintenance-guide" source={source} />
+          </motion.div>
         </motion.div>
       </div>
     </section>
