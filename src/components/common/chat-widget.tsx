@@ -5,7 +5,7 @@
 
 "use client";
 
-import { type ReactElement, useState, useRef, useEffect, type FormEvent } from "react";
+import { type ReactElement, useState, useRef, useEffect, type FormEvent, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatMessage {
@@ -16,6 +16,8 @@ interface ChatMessage {
 
 export function ChatWidget(): ReactElement {
   const [isOpen, setIsOpen] = useState(false);
+  const [showGreeting, setShowGreeting] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: "welcome",
@@ -26,11 +28,51 @@ export function ChatWidget(): ReactElement {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Play notification sound
+  const playNotificationSound = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = 0.3;
+      audioRef.current.play().catch(() => {
+        // Autoplay may be blocked - that's okay
+      });
+    }
+  }, []);
+
+  // Show greeting bubble after 4 seconds (only once per session)
+  useEffect(() => {
+    if (hasInteracted) return;
+
+    const timer = setTimeout(() => {
+      if (!isOpen && !hasInteracted) {
+        setShowGreeting(true);
+        playNotificationSound();
+      }
+    }, 4000);
+
+    return () => clearTimeout(timer);
+  }, [isOpen, hasInteracted, playNotificationSound]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  const handleOpenChat = (): void => {
+    setIsOpen(true);
+    setShowGreeting(false);
+    setHasInteracted(true);
+  };
+
+  const handleCloseChat = (): void => {
+    setIsOpen(false);
+  };
+
+  const handleDismissGreeting = (): void => {
+    setShowGreeting(false);
+    setHasInteracted(true);
+  };
 
   const handleSubmit = async (e: FormEvent): Promise<void> => {
     e.preventDefault();
@@ -106,14 +148,67 @@ export function ChatWidget(): ReactElement {
 
   return (
     <>
+      {/* Notification Sound - using a simple tone */}
+      <audio
+        ref={audioRef}
+        preload="auto"
+        src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdH2LkZSQg3VtcoCNmJqUhXZrcH6MmJqUhXZrcH6MmJqUhXVqb36LlpiVhndtcoCNmJqUhXVqb36LlpmWhndtcoCOmZuWhndscn+MmJqWh3htcn+MmJqWh3htcn+MmJqWh3htcn+MmJqWh3htcn+MmJqWh3htcn+MmZuXiHltc4CNmZuXiHluc4CNmZuXiHluc4CNmZuXiHluc4CNmZuXiXpvc4GOmpyYinpvc4GOmp2ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52Zinpvc4GOmp2ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52ZinpwdIKPm52Zintwc4KPm52ZintwdIKPm52Zi3twdIKQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajHxxdYOQnJ6ajH1ydoSRnZ+bj4BzeIWTn6Gdk4N3e4iWoaSglYZ6fYqZpKajmIl9gI2cp6mmm4yAg5CfqsConpGEhpOiray"
+      />
+
+      {/* Greeting Bubble */}
+      <AnimatePresence>
+        {showGreeting && !isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 10, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 10, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: "easeOut" }}
+            className="fixed bottom-24 right-6 z-50 max-w-[280px]"
+          >
+            {/* Dismiss button */}
+            <button
+              onClick={handleDismissGreeting}
+              className="absolute -top-2 -left-2 w-6 h-6 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center shadow-md transition-colors"
+              aria-label="Dismiss greeting"
+            >
+              <svg className="w-3 h-3 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            {/* Message bubble */}
+            <div
+              className="bg-white rounded-2xl shadow-xl border border-gray-100 p-4 cursor-pointer hover:shadow-2xl transition-shadow"
+              onClick={handleOpenChat}
+            >
+              <p className="text-gray-800 text-sm leading-relaxed">
+                Hi there! <span className="inline-block animate-wave">👋</span> Welcome to Rollcog!
+                <br />
+                <span className="text-gray-600">Got questions about commercial roofing?</span>
+              </p>
+            </div>
+
+            {/* Arrow pointing to chat button */}
+            <div className="absolute -bottom-2 right-8 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Chat Toggle Button */}
       <motion.button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={isOpen ? handleCloseChat : handleOpenChat}
         className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[var(--accent)] text-white rounded-full shadow-lg flex items-center justify-center hover:bg-[var(--accent-dark)] transition-colors"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
+        {/* Notification badge */}
+        {showGreeting && !isOpen && (
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold animate-pulse">
+            1
+          </span>
+        )}
+
         {isOpen ? (
           <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -208,6 +303,20 @@ export function ChatWidget(): ReactElement {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Wave animation style */}
+      <style jsx global>{`
+        @keyframes wave {
+          0%, 100% { transform: rotate(0deg); }
+          25% { transform: rotate(20deg); }
+          75% { transform: rotate(-15deg); }
+        }
+        .animate-wave {
+          animation: wave 1.5s ease-in-out infinite;
+          transform-origin: 70% 70%;
+          display: inline-block;
+        }
+      `}</style>
     </>
   );
 }

@@ -180,7 +180,7 @@ export function generateBlogPostingSchema({
   featuredImage,
   keywords,
 }: BlogPostSchemaOptions): object {
-  const url = `${SITE_CONFIG.url}/blog/${slug}`;
+  const url = `${SITE_CONFIG.url}/insights/${slug}`;
 
   return {
     "@context": "https://schema.org",
@@ -228,8 +228,8 @@ export function generateBlogPostingSchema({
     },
     isPartOf: {
       "@type": "Blog",
-      name: `${COMPANY.name} Blog`,
-      url: `${SITE_CONFIG.url}/blog`,
+      name: `${COMPANY.name} Insights`,
+      url: `${SITE_CONFIG.url}/insights`,
     },
   };
 }
@@ -253,10 +253,10 @@ export function generateBlogListSchema({ posts }: BlogListSchemaOptions): object
   return {
     "@context": "https://schema.org",
     "@type": "Blog",
-    name: `${COMPANY.name} Commercial Roofing Blog`,
+    name: `${COMPANY.name} Commercial Roofing Insights`,
     description:
       "Expert insights on commercial roofing systems, maintenance tips, and industry news from Chicago's trusted roofing professionals.",
-    url: `${SITE_CONFIG.url}/blog`,
+    url: `${SITE_CONFIG.url}/insights`,
     publisher: {
       "@type": "Organization",
       name: COMPANY.name,
@@ -266,7 +266,7 @@ export function generateBlogListSchema({ posts }: BlogListSchemaOptions): object
       "@type": "BlogPosting",
       headline: post.title,
       description: post.excerpt,
-      url: `${SITE_CONFIG.url}/blog/${post.slug}`,
+      url: `${SITE_CONFIG.url}/insights/${post.slug}`,
       datePublished: post.publishedAt,
     })),
   };

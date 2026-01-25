@@ -1,6 +1,6 @@
 /**
- * @fileoverview Individual blog post page
- * @module app/blog/[slug]/page
+ * @fileoverview Individual insights post page
+ * @module app/insights/[slug]/page
  */
 
 import { type ReactElement } from "react";
@@ -82,8 +82,8 @@ export default async function BlogPostPage({ params }: PageProps): Promise<React
 
   const breadcrumbSchema = generateBreadcrumbSchema([
     { name: "Home", url: SITE_CONFIG.url },
-    { name: "Blog", url: `${SITE_CONFIG.url}/blog` },
-    { name: post.title, url: `${SITE_CONFIG.url}/blog/${post.slug}` },
+    { name: "Insights", url: `${SITE_CONFIG.url}/insights` },
+    { name: post.title, url: `${SITE_CONFIG.url}/insights/${post.slug}` },
   ]);
 
   // Get related posts
@@ -152,7 +152,7 @@ export default async function BlogPostPage({ params }: PageProps): Promise<React
 
           <div className="text-center mt-10">
             <Link
-              href="/blog"
+              href="/insights"
               className="text-[var(--accent)] font-medium hover:underline"
             >
               View All Articles

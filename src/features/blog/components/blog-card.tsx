@@ -50,7 +50,7 @@ function formatDate(dateString: string): string {
 export function BlogCard({ post, className }: BlogCardProps): ReactElement {
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={`/insights/${post.slug}`}
       className={cn(
         "group block bg-white rounded-[20px] shadow-sm overflow-hidden",
         "transition-shadow duration-300 hover:shadow-md",

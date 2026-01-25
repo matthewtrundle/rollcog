@@ -128,7 +128,7 @@ export function generateBlogPostMetadata({
   keywords,
   featuredImage,
 }: BlogPostMetadataOptions): Metadata {
-  const url = `${SITE_CONFIG.url}/blog/${slug}`;
+  const url = `${SITE_CONFIG.url}/insights/${slug}`;
   const fullTitle = `${metaTitle} | ${COMPANY.name}`;
 
   return {
@@ -176,15 +176,15 @@ export function generateBlogPostMetadata({
 }
 
 /**
- * Generates metadata for the blog listing page.
+ * Generates metadata for the insights listing page.
  *
- * @returns Next.js Metadata object for the blog index
+ * @returns Next.js Metadata object for the insights index
  */
 export function generateBlogListMetadata(): Metadata {
   return generatePageMetadata({
-    title: "Commercial Roofing Blog",
+    title: "Commercial Roofing Insights",
     description:
       "Expert insights on commercial roofing systems, maintenance tips, and industry news. Learn about TPO, EPDM, modified bitumen, and flat roof care from Chicago's trusted roofing professionals.",
-    path: "/blog",
+    path: "/insights",
   });
 }

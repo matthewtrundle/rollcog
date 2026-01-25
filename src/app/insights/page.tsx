@@ -1,6 +1,6 @@
 /**
- * @fileoverview Blog listing page
- * @module app/blog/page
+ * @fileoverview Insights listing page
+ * @module app/insights/page
  */
 
 import { type ReactElement } from "react";
@@ -15,12 +15,12 @@ import {
 export const metadata: Metadata = generateBlogListMetadata();
 
 /**
- * Blog listing page component.
+ * Insights listing page component.
  *
- * Displays all blog posts in a responsive grid layout with
+ * Displays all articles in a responsive grid layout with
  * JSON-LD structured data for SEO.
  */
-export default function BlogPage(): ReactElement {
+export default function InsightsPage(): ReactElement {
   const postSummaries = getAllPostSummaries();
   const schemaData = generateBlogListSchema({
     posts: blogPosts.map((post) => ({
@@ -43,7 +43,7 @@ export default function BlogPage(): ReactElement {
       <Section variant="charcoal" padding="lg">
         <div className="max-w-3xl">
           <p className="text-sm font-medium text-white/60 uppercase tracking-wider mb-4">
-            Our Blog
+            Insights
           </p>
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight">
             Commercial Roofing
@@ -58,7 +58,7 @@ export default function BlogPage(): ReactElement {
         </div>
       </Section>
 
-      {/* Blog Posts Grid */}
+      {/* Articles Grid */}
       <Section variant="cream" padding="xl">
         <BlogList posts={postSummaries} />
       </Section>

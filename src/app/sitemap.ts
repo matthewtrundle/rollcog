@@ -71,19 +71,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.6,
     },
-    // Blog listing page
+    // Insights listing page
     {
-      url: `${BASE_URL}/blog`,
+      url: `${BASE_URL}/insights`,
       lastModified: now,
       changeFrequency: "weekly",
       priority: 0.8,
     },
   ];
 
-  // Generate blog post URLs dynamically
+  // Generate insights post URLs dynamically
   const blogSlugs = getAllSlugs();
   const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
-    url: `${BASE_URL}/blog/${slug}`,
+    url: `${BASE_URL}/insights/${slug}`,
     lastModified: now,
     changeFrequency: "monthly" as const,
     priority: 0.7,
