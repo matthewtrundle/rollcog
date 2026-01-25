@@ -182,6 +182,8 @@ function Header({ source }: { source: string }): ReactElement {
             width={44}
             height={44}
             className="rounded-lg shadow-lg"
+            priority
+            unoptimized
           />
           <span className="text-white font-semibold text-lg hidden sm:block group-hover:text-[var(--accent)] transition-colors">
             Rollcog Roofs
