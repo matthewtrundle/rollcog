@@ -19,7 +19,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { motion, useScroll, useTransform, type Variants, useInView } from "framer-motion";
+import { motion, type Variants, useInView } from "framer-motion";
 import { Button } from "@/components/ui";
 import { LeadMagnetCard, QuizFloatingWidget } from "@/components/lead-magnets";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
@@ -180,7 +180,7 @@ function Header({ source }: { source: string }): ReactElement {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-4 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
           <Image
-            src="/images/logo.png"
+            src="/logo.png"
             alt="Rollcog Roofs"
             width={44}
             height={44}
@@ -210,7 +210,7 @@ function Header({ source }: { source: string }): ReactElement {
 }
 
 /**
- * Hero section with video background and floating form
+ * Hero section with contained video and clean design
  */
 function HeroSection({
   config,
@@ -219,60 +219,33 @@ function HeroSection({
   config: typeof SOURCE_CONFIG.general;
   source: string;
 }): ReactElement {
-  const ref = useRef<HTMLElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  const videoScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 0.5], [0.6, 0.8]);
-
   return (
-    <section ref={ref} className="relative min-h-screen flex items-center overflow-hidden">
-      {/* Video Background */}
-      <motion.div className="absolute inset-0" style={{ scale: videoScale }}>
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-          className="absolute inset-0 w-full h-full object-cover"
-          poster={config.poster}
-        >
-          <source src={config.video} type="video/mp4" />
-        </video>
-      </motion.div>
-
-      {/* Gradient Overlay */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"
-        style={{ opacity: overlayOpacity }}
-      />
-
-      {/* Additional cinematic overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
+    <section className="relative bg-[var(--charcoal)] pt-24 pb-16 lg:pt-28 lg:pb-20 overflow-hidden">
+      {/* Subtle background texture */}
+      <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+      </div>
 
       {/* Content Grid */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-24 pb-16 lg:pt-32 lg:pb-24 w-full">
-        <div className="grid lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-          {/* Left Column - Content */}
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+          {/* Left Column - Content + Video */}
           <motion.div
             initial="hidden"
             animate="visible"
             variants={staggerContainer}
-            className="lg:col-span-6 xl:col-span-7"
           >
             {/* Badge */}
-            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full mb-6">
+            <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 bg-[var(--accent)]/10 border border-[var(--accent)]/20 px-4 py-2 rounded-full mb-6">
               <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
               <span className="text-sm text-white/90 font-medium">Free Estimates Available</span>
             </motion.div>
 
             <motion.h1
               variants={fadeInUp}
-              className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-white leading-[1.05] tracking-tight"
+              className="text-4xl sm:text-5xl lg:text-5xl xl:text-6xl font-bold text-white leading-[1.1] tracking-tight"
               style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
             >
               {config.headline}
@@ -281,7 +254,7 @@ function HeroSection({
 
             <motion.p
               variants={fadeInUp}
-              className="mt-6 text-lg sm:text-xl text-white/80 leading-relaxed max-w-xl"
+              className="mt-5 text-lg text-white/70 leading-relaxed max-w-lg"
             >
               {config.subheadline}
             </motion.p>
@@ -289,34 +262,59 @@ function HeroSection({
             {/* Feature highlight */}
             <motion.div
               variants={fadeInUp}
-              className="mt-8 flex items-center gap-3 bg-[var(--accent)]/20 backdrop-blur-sm px-5 py-3 rounded-xl w-fit"
+              className="mt-6 flex items-center gap-3 bg-[var(--accent)]/10 border border-[var(--accent)]/20 px-4 py-2.5 rounded-xl w-fit"
             >
-              <svg className="w-6 h-6 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+              <svg className="w-5 h-5 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              <span className="text-white font-medium">{config.accentFeature}</span>
+              <span className="text-white/90 font-medium text-sm">{config.accentFeature}</span>
+            </motion.div>
+
+            {/* Contained Video Box */}
+            <motion.div
+              variants={fadeInUp}
+              className="mt-8 relative rounded-2xl overflow-hidden shadow-2xl"
+            >
+              <div className="aspect-video relative">
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  poster={config.poster}
+                >
+                  <source src={config.video} type="video/mp4" />
+                </video>
+                {/* Light overlay to soften video */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/40 via-transparent to-[var(--charcoal)]/20" />
+              </div>
+              {/* Video label */}
+              <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
+                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+                <span className="text-xs text-white/80 font-medium">Live Project</span>
+              </div>
             </motion.div>
 
             {/* Trust badges row */}
             <motion.div
               variants={fadeInUp}
-              className="mt-10 pt-8 border-t border-white/20"
+              className="mt-8 flex flex-wrap gap-x-6 gap-y-3"
             >
-              <div className="flex flex-wrap gap-x-8 gap-y-4">
-                {TRUST_BADGES.slice(0, 3).map((badge) => (
-                  <div key={badge.text} className="flex items-center gap-2">
-                    <div className="w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
-                      <svg className="w-3 h-3 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <span className="text-sm text-white/70">{badge.text}</span>
+              {TRUST_BADGES.slice(0, 3).map((badge) => (
+                <div key={badge.text} className="flex items-center gap-2">
+                  <div className="w-5 h-5 rounded-full bg-[var(--accent)]/20 flex items-center justify-center">
+                    <svg className="w-3 h-3 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
                   </div>
-                ))}
-              </div>
+                  <span className="text-sm text-white/60">{badge.text}</span>
+                </div>
+              ))}
             </motion.div>
 
-            {/* Mobile CTA - shows below form on mobile */}
+            {/* Mobile CTA */}
             <motion.div variants={fadeInUp} className="mt-8 lg:hidden">
               <a
                 href={`tel:${COMPANY.phone}`}
@@ -335,33 +333,16 @@ function HeroSection({
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className="lg:col-span-6 xl:col-span-5"
+            transition={{ delay: 0.3, duration: 0.5 }}
           >
             <div className="relative">
               {/* Glow effect */}
-              <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)] to-orange-400 rounded-3xl blur-lg opacity-30" />
+              <div className="absolute -inset-1 bg-gradient-to-r from-[var(--accent)] to-orange-400 rounded-3xl blur-lg opacity-20" />
               <LandingPageForm source={source} />
             </div>
           </motion.div>
         </div>
       </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden lg:block"
-      >
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="w-6 h-10 rounded-full border-2 border-white/30 flex items-start justify-center p-2"
-        >
-          <motion.div className="w-1 h-2 bg-white/60 rounded-full" />
-        </motion.div>
-      </motion.div>
     </section>
   );
 }
