@@ -5,8 +5,8 @@
  * @module components/admin/WebVitalsGauge
  */
 
-import { type ReactElement } from "react";
-import { motion } from "framer-motion";
+import { type ReactElement, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type MetricRating = "good" | "needs-improvement" | "poor";
 
@@ -37,6 +37,16 @@ const FULL_NAMES: Record<string, string> = {
   TTFB: "Time to First Byte",
   INP: "Interaction to Next Paint",
   FCP: "First Contentful Paint",
+};
+
+// Plain-language definitions for each metric
+const DEFINITIONS: Record<string, string> = {
+  LCP: "How long until the main content (largest image or text block) appears. Under 2.5s is good.",
+  FID: "How long until the page responds to first user interaction (click, tap). Under 100ms is good.",
+  CLS: "How much the page layout shifts while loading. Lower is better - under 0.1 is good.",
+  TTFB: "How long until the server starts sending data. Under 800ms is good.",
+  INP: "How responsive the page feels during interactions. Under 200ms is good.",
+  FCP: "How long until any content first appears on screen. Under 1.8s is good.",
 };
 
 function getRatingColor(rating: MetricRating): string {
@@ -84,6 +94,40 @@ function getRatingIcon(rating: MetricRating): ReactElement {
   }
 }
 
+function InfoTooltip({ text }: { text: string }): ReactElement {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="relative inline-block">
+      <button
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-4 h-4 rounded-full bg-gray-600 hover:bg-gray-500 flex items-center justify-center text-gray-300 hover:text-white transition-colors ml-1"
+        aria-label="More info"
+      >
+        <svg className="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+        </svg>
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 5, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 5, scale: 0.95 }}
+            transition={{ duration: 0.15 }}
+            className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 p-3 bg-gray-900 border border-gray-700 rounded-lg shadow-xl text-xs text-gray-300 leading-relaxed"
+          >
+            {text}
+            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
+
 function VitalCard({ vital, index }: { vital: WebVital; index: number }): ReactElement {
   const threshold = THRESHOLDS[vital.name];
   const formattedValue = threshold ? threshold.format(vital.value) : vital.value.toString();
@@ -97,7 +141,10 @@ function VitalCard({ vital, index }: { vital: WebVital; index: number }): ReactE
     >
       <div className="flex items-start justify-between mb-3">
         <div>
-          <span className="text-lg font-bold text-white">{vital.name}</span>
+          <div className="flex items-center">
+            <span className="text-lg font-bold text-white">{vital.name}</span>
+            <InfoTooltip text={DEFINITIONS[vital.name]} />
+          </div>
           <p className="text-xs text-gray-400 mt-0.5">{FULL_NAMES[vital.name]}</p>
         </div>
         {getRatingIcon(vital.rating)}
