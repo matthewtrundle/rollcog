@@ -126,7 +126,7 @@ export function QuizFloatingWidget({
               </button>
 
               {/* Pulse animation */}
-              <span className="absolute -inset-1 rounded-full bg-[var(--accent)] animate-ping opacity-20" />
+              <span className="absolute -inset-1 rounded-full bg-[var(--accent)] animate-ping opacity-20 pointer-events-none" />
             </motion.div>
           )}
         </div>
