@@ -6,6 +6,7 @@
 "use client";
 
 import { type ReactElement, useState, useRef, useEffect, type FormEvent, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ChatMessage {
@@ -31,10 +32,16 @@ function getRandomOpeningMessage(): string {
   return OPENING_FACTS[randomIndex];
 }
 
-export function ChatWidget(): ReactElement {
+export function ChatWidget(): ReactElement | null {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
+
+  // Hide chatbot on landing pages where quiz widget is shown
+  if (pathname?.startsWith("/estimate")) {
+    return null;
+  }
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: "welcome",
