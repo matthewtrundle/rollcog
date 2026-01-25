@@ -56,17 +56,20 @@ export default function AdminLayout({ children }: AdminLayoutProps): ReactElemen
   const [showAIModal, setShowAIModal] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // Don't render layout for login page
-  if (pathname === "/admin/login") {
-    return <>{children}</>;
-  }
+  const isLoginPage = pathname === "/admin/login";
 
   useEffect(() => {
+    if (isLoginPage) return;
     setLastUpdated(new Date());
     // Update time every minute
     const interval = setInterval(() => setLastUpdated(new Date()), 60000);
     return () => clearInterval(interval);
-  }, []);
+  }, [isLoginPage]);
+
+  // Don't render layout for login page
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
 
   async function handleLogout(): Promise<void> {
     await fetch("/api/admin/auth", { method: "DELETE" });
