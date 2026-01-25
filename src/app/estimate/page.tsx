@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, useScroll, useTransform, type Variants, useInView } from "framer-motion";
 import { Button } from "@/components/ui";
-import { LeadMagnetCard } from "@/components/lead-magnets";
+import { LeadMagnetCard, QuizFloatingWidget } from "@/components/lead-magnets";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
 import { COMPANY } from "@/lib/utils/constants";
 import { trackEvent } from "@/lib/utils";
@@ -159,6 +159,9 @@ function LandingPageContent(): ReactElement {
 
       {/* Final CTA */}
       <FinalCTASection source={source} />
+
+      {/* Floating Quiz Widget */}
+      <QuizFloatingWidget delay={8000} source={`${source}-floating`} />
     </div>
   );
 }
