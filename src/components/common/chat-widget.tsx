@@ -37,14 +37,6 @@ export function ChatWidget(): ReactElement | null {
   const [isOpen, setIsOpen] = useState(false);
   const [showGreeting, setShowGreeting] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
-
-  // Only show chatbot on Contact and About pages
-  const showChatbotPages = ["/contact", "/about"];
-  const shouldShow = showChatbotPages.some(page => pathname?.startsWith(page));
-
-  if (!shouldShow) {
-    return null;
-  }
   const [messages, setMessages] = useState<ChatMessage[]>(() => [
     {
       id: "welcome",
@@ -56,6 +48,14 @@ export function ChatWidget(): ReactElement | null {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Only show chatbot on Contact and About pages
+  const showChatbotPages = ["/contact", "/about"];
+  const shouldShow = showChatbotPages.some(page => pathname?.startsWith(page));
+
+  if (!shouldShow) {
+    return null;
+  }
 
   // Play notification sound
   const playNotificationSound = useCallback(() => {
