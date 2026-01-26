@@ -353,11 +353,6 @@ function HeroSection({
                 {/* Light overlay to soften video and hide watermark */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/50 via-transparent to-[var(--charcoal)]/20" />
               </div>
-              {/* Video label */}
-              <div className="absolute bottom-3 left-3 flex items-center gap-2 bg-black/50 backdrop-blur-sm px-3 py-1.5 rounded-full">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                <span className="text-xs text-white/80 font-medium">Live Project</span>
-              </div>
             </motion.div>
 
             {/* Trust badges row */}
