@@ -13,7 +13,7 @@ const openrouter = createOpenAI({
 });
 
 // System prompt for the roofing expert
-const SYSTEM_PROMPT = `You are an expert commercial roofing consultant for Rollcog Roofs, a GAF-certified commercial roofing contractor with 27+ years of experience based in Oak Brook, Illinois.
+const SYSTEM_PROMPT = `You are an expert commercial roofing consultant for Rollcog Roofs, a GAF-certified commercial roofing contractor with 27+ years of experience based in Willowbrook, Illinois.
 
 Your expertise includes:
 - TPO (Thermoplastic Polyolefin) roofing systems

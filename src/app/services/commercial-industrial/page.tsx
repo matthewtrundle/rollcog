@@ -121,7 +121,7 @@ export default function CommercialIndustrialPage(): ReactElement {
               emergency repairs to protect your assets.
             </p>
             <p>
-              Based in Oak Brook, IL, we serve clients throughout the Midwest
+              Based in Willowbrook, IL, we serve clients throughout the Midwest
               and Southeast—Illinois, Indiana, Ohio, West Virginia, Kentucky,
               Tennessee, North Carolina, South Carolina, and Georgia. For
               multi-location businesses, we provide consistent quality across

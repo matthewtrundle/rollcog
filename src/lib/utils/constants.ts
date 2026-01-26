@@ -9,10 +9,10 @@ export const COMPANY = {
   phone: "630-655-8256",
   email: "office@rollcog.com",
   address: {
-    street: "19W010 Avenue Normandy E",
-    city: "Oak Brook",
+    street: "629 Executive Dr.",
+    city: "Willowbrook",
     state: "IL",
-    zip: "60523",
+    zip: "60527",
     country: "US",
   },
   experience: "27+",
@@ -43,7 +43,7 @@ export const CERTIFICATIONS = [
 ] as const;
 
 export const SERVICE_AREAS = {
-  primary: ["Chicago", "Oak Brook", "Chicagoland Metropolitan Area"],
+  primary: ["Chicago", "Willowbrook", "Chicagoland Metropolitan Area"],
   extended: [
     "Indiana",
     "Ohio",
@@ -141,7 +141,7 @@ export const SITE_CONFIG = {
     "flat roof repair",
     "commercial roof replacement",
     "GAF certified roofer",
-    "Oak Brook roofing",
+    "Willowbrook roofing",
     "industrial roofing",
   ],
 } as const;

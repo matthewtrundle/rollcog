@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
   {
     question: "What areas do you serve?",
     answer:
-      "We're based in Oak Brook, IL and serve the entire Chicagoland metropolitan area. We also work with clients across multiple states including Indiana, Ohio, West Virginia, Kentucky, Tennessee, North Carolina, South Carolina, and Georgia.",
+      "We're based in Willowbrook, IL and serve the entire Chicagoland metropolitan area. We also work with clients across multiple states including Indiana, Ohio, West Virginia, Kentucky, Tennessee, North Carolina, South Carolina, and Georgia.",
   },
   {
     question: "Are you licensed and insured?",

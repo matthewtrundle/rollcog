@@ -77,8 +77,11 @@ export function trackConversion(conversionLabel?: string): void {
 export function trackFormSubmission(service?: string): void {
   trackEvent("form_submit", "Conversion", service);
 
-  if (process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID) {
-    trackConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID);
+  // Use specific form conversion label if available
+  const formConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_CONVERSION
+    || process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID;
+  if (formConversionId) {
+    trackConversion(formConversionId);
   }
 }
 
@@ -88,9 +91,11 @@ export function trackFormSubmission(service?: string): void {
 export function trackPhoneClick(location: string = "Header"): void {
   trackEvent("phone_click", "Conversion", location);
 
-  // Track as conversion for Google Ads
-  if (process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID) {
-    trackConversion(process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID);
+  // Use specific phone conversion label if available
+  const phoneConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_PHONE_CONVERSION
+    || process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID;
+  if (phoneConversionId) {
+    trackConversion(phoneConversionId);
   }
 }
 

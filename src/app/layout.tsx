@@ -30,10 +30,11 @@ const sourceSerif = Source_Serif_4({
 });
 
 /**
- * Google Analytics / Google Ads Measurement ID
- * Set this in environment variable for production
+ * Google Analytics / Google Ads Measurement IDs
+ * Set these in environment variables for production
  */
 const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_CONVERSION_ID;
 
 export const metadata: Metadata = {
   title: {
@@ -78,6 +79,7 @@ export default function RootLayout({
                 function gtag(){dataLayer.push(arguments);}
                 gtag('js', new Date());
                 gtag('config', '${GA_MEASUREMENT_ID}');
+                ${GOOGLE_ADS_ID ? `gtag('config', '${GOOGLE_ADS_ID}');` : ''}
               `}
             </Script>
           </>
