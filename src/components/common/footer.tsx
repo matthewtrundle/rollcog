@@ -146,6 +146,9 @@ export function Footer(): ReactElement | null {
             <p className="text-sm text-white/50">
               &copy; {currentYear} {COMPANY.name}
             </p>
+            <p className="text-sm text-white/50 mt-1">
+              Rollcog is part of ATJ group
+            </p>
             <div className="flex gap-6">
               <Link
                 href="/privacy"

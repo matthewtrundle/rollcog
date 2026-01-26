@@ -80,7 +80,7 @@ export const blogPosts: BlogPost[] = [
       {
         type: "list",
         items: [
-          "Exceptional durability with 30+ year lifespan potential",
+          "Exceptional durability with 30+ year lifespan potential (when covered with ballasted stone)",
           "Excellent resistance to extreme temperatures",
           "Low maintenance requirements",
           "Easy to repair with patches and adhesives",
@@ -798,7 +798,7 @@ export const blogPosts: BlogPost[] = [
         type: "callout",
         title: "What to Expect",
         content:
-          "Tear-off typically generates the most noise and debris. For a 20,000 square foot roof, tear-off usually takes 2-4 days depending on the number of existing layers and deck condition.",
+          "Tear-off typically generates the most noise and debris. For a 20,000 square foot roof, tear-off usually takes 6-8 days depending on the number of existing layers and deck condition.",
         variant: "info",
       },
       {
