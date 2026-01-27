@@ -22,8 +22,8 @@ LIGHT_PURPLE = HexColor("#f3e8ff")
 # Company info
 COMPANY_NAME = "Rollcog Roofs"
 PHONE = "630-655-8256"
-EMAIL = "office@rollcog.com"
-WEBSITE = "rollcog.com"
+EMAIL = "sarah@atjcorp.net"
+WEBSITE = "rollcogroofing.com"
 
 class MaintenancePDFGenerator:
     def __init__(self, filename):

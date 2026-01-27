@@ -7,7 +7,7 @@ export const COMPANY = {
   name: "Rollcog Roofs",
   legalName: "Rollcog Roofing LLC",
   phone: "630-655-8256",
-  email: "office@rollcog.com",
+  email: "sarah@atjcorp.net",
   address: {
     street: "629 Executive Dr.",
     city: "Willowbrook",
@@ -130,7 +130,7 @@ export const SOCIAL_LINKS = {
 } as const;
 
 export const SITE_CONFIG = {
-  url: "https://rollcog.com",
+  url: "https://rollcogroofing.com",
   title: "Rollcog Roofs | Commercial Roofing Contractors Chicago",
   description:
     "GAF Certified commercial roofing contractors serving Chicagoland and beyond. 27+ years experience in TPO, modified bitumen, and flat roof systems. Get a free estimate.",

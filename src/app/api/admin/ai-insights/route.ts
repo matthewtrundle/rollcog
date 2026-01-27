@@ -73,7 +73,7 @@ export async function POST(): Promise<Response> {
     const topPages = topPagesResult.rows.map((row) => {
       let path = "/";
       try {
-        const url = new URL(row.href, "https://rollcog.com");
+        const url = new URL(row.href, "https://rollcogroofing.com");
         path = url.pathname;
       } catch {
         path = row.href;

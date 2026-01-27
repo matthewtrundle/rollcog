@@ -31,13 +31,13 @@ export default function ModBitPage(): ReactElement {
   const serviceSchema = generateServiceSchema({
     name: SERVICE_NAME,
     description: SERVICE_DESCRIPTION,
-    url: "https://rollcog.com/services/mod-bit",
+    url: "https://rollcogroofing.com/services/mod-bit",
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: "https://rollcog.com" },
-    { name: "Services", url: "https://rollcog.com/services" },
-    { name: SERVICE_NAME, url: "https://rollcog.com/services/mod-bit" },
+    { name: "Home", url: "https://rollcogroofing.com" },
+    { name: "Services", url: "https://rollcogroofing.com/services" },
+    { name: SERVICE_NAME, url: "https://rollcogroofing.com/services/mod-bit" },
   ]);
 
   return (

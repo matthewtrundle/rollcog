@@ -65,8 +65,8 @@ export function generatePageMetadata({
       description,
     },
     verification: {
-      // Add when available
-      // google: "verification-code",
+      // Add your Google Search Console verification code here
+      // google: "YOUR_GSC_VERIFICATION_CODE",
     },
   };
 }

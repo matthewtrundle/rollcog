@@ -110,7 +110,7 @@ async function generateImage(prompt, filename) {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'https://rollcog.com',
+        'HTTP-Referer': 'https://rollcogroofing.com',
         'X-Title': 'Rollcog Website Image Generation',
       },
       body: JSON.stringify({

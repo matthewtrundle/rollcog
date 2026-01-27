@@ -172,7 +172,7 @@ export async function GET(): Promise<NextResponse> {
       0
     );
     const topPages: TopPage[] = topPagesResult.rows.map((row) => {
-      const url = new URL(row.href, "https://rollcog.com");
+      const url = new URL(row.href, "https://rollcogroofing.com");
       return {
         path: url.pathname,
         pageviews: parseInt(row.count, 10),

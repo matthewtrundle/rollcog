@@ -167,7 +167,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         subject: `Your Free Commercial ${guideTitle} from Rollcog Roofs`,
         html: emailHtml,
         text: emailText,
-        reply_to: "office@rollcog.com",
+        reply_to: "sarah@atjcorp.net",
         attachments: [
           {
             filename: pdfFileName,

@@ -30,8 +30,8 @@ export function generateLocalBusinessSchema(): object {
     },
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 41.8337,
-      longitude: -87.9554,
+      latitude: 41.7547,
+      longitude: -87.9356,
     },
     areaServed: [
       ...SERVICE_AREAS.primary.map((area) => ({
@@ -99,8 +99,8 @@ export function generateServiceSchema({
       "@type": "GeoCircle",
       geoMidpoint: {
         "@type": "GeoCoordinates",
-        latitude: 41.8337,
-        longitude: -87.9554,
+        latitude: 41.7547,
+        longitude: -87.9356,
       },
       geoRadius: "150 mi",
     },

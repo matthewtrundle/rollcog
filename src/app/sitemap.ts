@@ -6,7 +6,7 @@
 import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/features/blog";
 
-const BASE_URL = "https://rollcog.com";
+const BASE_URL = "https://rollcogroofing.com";
 
 /**
  * Generate sitemap for search engines.
@@ -84,6 +84,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "monthly",
       priority: 0.9,
+    },
+    // Legal pages
+    {
+      url: `${BASE_URL}/privacy`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
+    {
+      url: `${BASE_URL}/terms`,
+      lastModified: now,
+      changeFrequency: "yearly",
+      priority: 0.3,
     },
   ];
 

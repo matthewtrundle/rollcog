@@ -35,7 +35,7 @@ async function main(): Promise<void> {
       subject: "[TEST] Thank you for contacting Rollcog Roofs!",
       html,
       text,
-      reply_to: "office@rollcog.com",
+      reply_to: "sarah@atjcorp.net",
     }),
   });
 

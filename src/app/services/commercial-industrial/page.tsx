@@ -32,15 +32,15 @@ export default function CommercialIndustrialPage(): ReactElement {
   const serviceSchema = generateServiceSchema({
     name: SERVICE_NAME,
     description: SERVICE_DESCRIPTION,
-    url: "https://rollcog.com/services/commercial-industrial",
+    url: "https://rollcogroofing.com/services/commercial-industrial",
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: "https://rollcog.com" },
-    { name: "Services", url: "https://rollcog.com/services" },
+    { name: "Home", url: "https://rollcogroofing.com" },
+    { name: "Services", url: "https://rollcogroofing.com/services" },
     {
       name: SERVICE_NAME,
-      url: "https://rollcog.com/services/commercial-industrial",
+      url: "https://rollcogroofing.com/services/commercial-industrial",
     },
   ]);
 

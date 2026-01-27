@@ -31,15 +31,15 @@ export default function FlatRoofRepairPage(): ReactElement {
   const serviceSchema = generateServiceSchema({
     name: SERVICE_NAME,
     description: SERVICE_DESCRIPTION,
-    url: "https://rollcog.com/services/flat-roof-repair",
+    url: "https://rollcogroofing.com/services/flat-roof-repair",
   });
 
   const breadcrumbSchema = generateBreadcrumbSchema([
-    { name: "Home", url: "https://rollcog.com" },
-    { name: "Services", url: "https://rollcog.com/services" },
+    { name: "Home", url: "https://rollcogroofing.com" },
+    { name: "Services", url: "https://rollcogroofing.com/services" },
     {
       name: SERVICE_NAME,
-      url: "https://rollcog.com/services/flat-roof-repair",
+      url: "https://rollcogroofing.com/services/flat-roof-repair",
     },
   ]);
 

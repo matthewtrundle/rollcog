@@ -184,7 +184,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         subject: `Thank you for contacting Rollcog Roofs!`,
         html: confirmationHtml,
         text: confirmationText,
-        reply_to: "office@rollcog.com",
+        reply_to: "sarah@atjcorp.net",
       }),
     });
 

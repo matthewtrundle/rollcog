@@ -5,7 +5,7 @@
 
 import type { MetadataRoute } from "next";
 
-const BASE_URL = "https://rollcog.com";
+const BASE_URL = "https://rollcogroofing.com";
 
 /**
  * Generate robots.txt for search engine crawlers.
@@ -17,7 +17,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/_next/"],
+        disallow: ["/api/", "/_next/", "/admin/"],
       },
     ],
     sitemap: `${BASE_URL}/sitemap.xml`,

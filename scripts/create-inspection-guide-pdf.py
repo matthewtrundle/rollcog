@@ -26,8 +26,8 @@ WHITE = HexColor("#ffffff")
 # Company info
 COMPANY_NAME = "Rollcog Roofs"
 PHONE = "630-655-8256"
-EMAIL = "office@rollcog.com"
-WEBSITE = "rollcog.com"
+EMAIL = "sarah@atjcorp.net"
+WEBSITE = "rollcogroofing.com"
 
 class PDFGenerator:
     def __init__(self, filename):

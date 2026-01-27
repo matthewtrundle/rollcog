@@ -206,7 +206,7 @@ export function generateLeadMagnetEmail(data: LeadMagnetEmailData): string {
                     <p style="margin: 0 0 24px 0; color: #64748b; font-size: 14px;">
                       Schedule a free, no-obligation inspection with our GAF-certified team.
                     </p>
-                    <a href="https://rollcog.com/contact" style="display: inline-block; background-color: #ea580c; color: #ffffff; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                    <a href="https://rollcogroofing.com/contact" style="display: inline-block; background-color: #ea580c; color: #ffffff; padding: 16px 32px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
                       Schedule Free Inspection
                     </a>
                     <p style="margin: 24px 0 0 0; color: #64748b; font-size: 14px;">
@@ -252,7 +252,7 @@ export function generateLeadMagnetEmail(data: LeadMagnetEmailData): string {
                 ${COMPANY.address.street} &bull; ${COMPANY.address.city}, ${COMPANY.address.state} ${COMPANY.address.zip}
               </p>
               <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 12px;">
-                <a href="mailto:office@rollcog.com" style="color: #ea580c; text-decoration: none;">office@rollcog.com</a>
+                <a href="mailto:sarah@atjcorp.net" style="color: #ea580c; text-decoration: none;">sarah@atjcorp.net</a>
               </p>
               <p style="margin: 24px 0 0 0; color: rgba(255,255,255,0.3); font-size: 11px;">
                 &copy; ${new Date().getFullYear()} Rollcog Roofs. All rights reserved.
@@ -305,7 +305,7 @@ ${leadMagnetType === "maintenance-guide" ? `
 READY FOR A PROFESSIONAL ASSESSMENT?
 Schedule a free, no-obligation inspection with our GAF-certified team.
 
-Visit: https://rollcog.com/contact
+Visit: https://rollcogroofing.com/contact
 Call us: ${COMPANY.phone}
 
 ---

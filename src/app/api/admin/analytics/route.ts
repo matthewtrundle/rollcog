@@ -100,7 +100,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const pageStats: PageStats[] = pageStatsResult.rows.map((row) => {
       let path = "/";
       try {
-        const url = new URL(row.href, "https://rollcog.com");
+        const url = new URL(row.href, "https://rollcogroofing.com");
         path = url.pathname;
       } catch {
         path = row.href;

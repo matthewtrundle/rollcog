@@ -389,7 +389,7 @@ export function generateCustomerConfirmationEmail(data: { name: string; service?
                 ${COMPANY.address.street} &bull; ${COMPANY.address.city}, ${COMPANY.address.state} ${COMPANY.address.zip}
               </p>
               <p style="margin: 0; color: rgba(255,255,255,0.5); font-size: 12px;">
-                <a href="mailto:office@rollcog.com" style="color: #ea580c; text-decoration: none;">office@rollcog.com</a>
+                <a href="mailto:sarah@atjcorp.net" style="color: #ea580c; text-decoration: none;">sarah@atjcorp.net</a>
               </p>
               <p style="margin: 24px 0 0 0; color: rgba(255,255,255,0.3); font-size: 11px;">
                 &copy; ${new Date().getFullYear()} Rollcog Roofs. All rights reserved.
