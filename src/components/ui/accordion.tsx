@@ -7,7 +7,7 @@
 
 import { type ReactElement, useState } from "react";
 import { cn } from "@/lib/utils";
-import { trackFAQClick } from "@/lib/utils/analytics";
+import { trackFAQExpand } from "@/lib/utils/analytics";
 
 interface AccordionItemProps {
   question: string;
@@ -101,9 +101,9 @@ export function Accordion({
   const handleToggle = (index: number): void => {
     const isOpening = !openIndexes.has(index);
 
-    // Track FAQ click when opening (not closing)
+    // Track FAQ expand when opening (not closing)
     if (isOpening) {
-      trackFAQClick(items[index].question);
+      trackFAQExpand(items[index].question);
     }
 
     setOpenIndexes((prev) => {

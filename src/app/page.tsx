@@ -11,7 +11,7 @@ import Image from "next/image";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
 import { Button, Section } from "@/components/ui";
 import { LoadingScreen } from "@/components/common/loading-screen";
-import { trackCustomEventToPostgres } from "@/lib/utils/analytics";
+import { trackServiceView } from "@/lib/utils/analytics";
 import { COMPANY, SERVICES } from "@/lib/utils/constants";
 
 // Service images mapping
@@ -356,10 +356,7 @@ function ServicesSection(): ReactElement {
                     className="group block"
                     onMouseEnter={() => setHoveredService(service.id)}
                     onMouseLeave={() => setHoveredService(null)}
-                    onClick={() => trackCustomEventToPostgres("engagement", "service_click", {
-                      service_id: service.id,
-                      service_name: service.name,
-                    })}
+                    onClick={() => trackServiceView(service.name, "homepage")}
                   >
                     <div className="flex items-start justify-between gap-8">
                       <div className="space-y-5">

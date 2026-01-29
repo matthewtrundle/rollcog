@@ -13,6 +13,14 @@
 
 "use client";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+declare global {
+  interface Window {
+    gtag?: (...args: any[]) => void;
+  }
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
 import { type ReactElement, useState, useEffect, useRef, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
@@ -24,7 +32,7 @@ import { Button } from "@/components/ui";
 import { LeadMagnetCard } from "@/components/lead-magnets";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
 import { COMPANY } from "@/lib/utils/constants";
-import { trackEvent } from "@/lib/utils";
+import { trackLandingPageView, trackPhoneClick, trackFormSubmission, getUTMParams } from "@/lib/utils";
 
 // Dynamic content based on source parameter
 const SOURCE_CONFIG: Record<string, {
@@ -132,15 +140,20 @@ function LandingPageContent(): ReactElement {
   const source = searchParams.get("source") || "general";
   const config = SOURCE_CONFIG[source] || SOURCE_CONFIG.general;
 
-  // Track landing page view with source
+  // Track landing page view with source and UTM params
   useEffect(() => {
-    trackEvent("landing_page_view", "Landing Page", source);
+    const utmParams = getUTMParams();
+    trackLandingPageView(
+      utmParams.utm_source || source,
+      utmParams.utm_medium || undefined,
+      utmParams.utm_campaign || undefined
+    );
   }, [source]);
 
   return (
     <div className="min-h-screen bg-[var(--charcoal)]">
       {/* Minimal Header */}
-      <Header source={source} />
+      <Header />
 
       {/* Hero with Video Background */}
       <HeroSection config={config} source={source} />
@@ -158,7 +171,7 @@ function LandingPageContent(): ReactElement {
       <LeadMagnetSection source={source} />
 
       {/* Final CTA */}
-      <FinalCTASection source={source} />
+      <FinalCTASection />
     </div>
   );
 }
@@ -166,7 +179,7 @@ function LandingPageContent(): ReactElement {
 /**
  * Header with logo, navigation, and phone
  */
-function Header({ source }: { source: string }): ReactElement {
+function Header(): ReactElement {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const navLinks = [
@@ -217,7 +230,7 @@ function Header({ source }: { source: string }): ReactElement {
           <a
             href={`tel:${COMPANY.phone}`}
             className="flex items-center gap-2 bg-[var(--accent)] hover:bg-orange-600 px-4 py-2.5 rounded-full text-white transition-all hover:scale-105 shadow-lg"
-            onClick={() => trackEvent("phone_click", "Landing Page Header", source)}
+            onClick={() => trackPhoneClick("header")}
           >
             <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,7 +390,7 @@ function HeroSection({
               <a
                 href={`tel:${COMPANY.phone}`}
                 className="flex items-center justify-center gap-3 bg-white text-[var(--charcoal)] font-semibold px-6 py-4 rounded-xl w-full hover:bg-gray-100 transition-colors"
-                onClick={() => trackEvent("phone_click", "Landing Page Hero Mobile", source)}
+                onClick={() => trackPhoneClick("hero-mobile")}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
@@ -440,16 +453,19 @@ function LandingPageForm({ source }: { source: string }): ReactElement {
 
       if (!response.ok) throw new Error("Failed to send message");
 
+      // Track form submission via Vercel Analytics
+      trackFormSubmission("estimate", source);
+
+      // Google Ads conversion tracking (if configured)
       if (typeof window !== "undefined" && window.gtag) {
-        window.gtag("event", "generate_lead", {
-          event_category: "Lead",
-          event_label: source,
-          value: 100,
-          currency: "USD",
-        });
+        const formConversionId = process.env.NEXT_PUBLIC_GOOGLE_ADS_FORM_CONVERSION;
+        if (formConversionId) {
+          window.gtag("event", "conversion", {
+            send_to: formConversionId,
+          });
+        }
       }
 
-      trackEvent("form_submit", "Landing Page", source);
       setSubmitStatus("success");
       reset();
     } catch {
@@ -900,7 +916,7 @@ function LeadMagnetSection({ source }: { source: string }): ReactElement {
 /**
  * Final CTA section
  */
-function FinalCTASection({ source }: { source: string }): ReactElement {
+function FinalCTASection(): ReactElement {
   const scrollToForm = (): void => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -951,7 +967,7 @@ function FinalCTASection({ source }: { source: string }): ReactElement {
             <a
               href={`tel:${COMPANY.phone}`}
               className="inline-flex items-center justify-center gap-3 bg-white text-[var(--charcoal)] font-semibold px-8 py-4 rounded-xl hover:bg-gray-100 transition-all hover:scale-105 shadow-lg"
-              onClick={() => trackEvent("phone_click", "Landing Page CTA", source)}
+              onClick={() => trackPhoneClick("cta")}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />

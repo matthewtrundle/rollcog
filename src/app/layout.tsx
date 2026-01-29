@@ -11,7 +11,6 @@ import { Navigation } from "@/components/common/navigation";
 import { Footer } from "@/components/common/footer";
 import { ChatWidget } from "@/components/common/chat-widget";
 import { QuizFloatingWidget } from "@/components/lead-magnets";
-import { AnalyticsProvider } from "@/components/analytics";
 import { generateLocalBusinessSchema } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/utils/constants";
 import "./globals.css";
@@ -90,21 +89,19 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-screen flex flex-col antialiased">
-        <AnalyticsProvider>
-          {/* Skip to main content link for keyboard users */}
-          <a
-            href="#main-content"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-[var(--accent-dark)] focus:text-white focus:px-6 focus:py-3 focus:rounded-xl focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
-          >
-            Skip to main content
-          </a>
-          <Navigation />
-          <main id="main-content" className="flex-1 pt-16 lg:pt-20">{children}</main>
-          <Footer />
-          <ChatWidget />
-          <QuizFloatingWidget delay={8000} source="global" />
-          <Analytics />
-        </AnalyticsProvider>
+        {/* Skip to main content link for keyboard users */}
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-[var(--accent-dark)] focus:text-white focus:px-6 focus:py-3 focus:rounded-xl focus:font-semibold focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2"
+        >
+          Skip to main content
+        </a>
+        <Navigation />
+        <main id="main-content" className="flex-1 pt-16 lg:pt-20">{children}</main>
+        <Footer />
+        <ChatWidget />
+        <QuizFloatingWidget delay={8000} source="global" />
+        <Analytics />
       </body>
     </html>
   );

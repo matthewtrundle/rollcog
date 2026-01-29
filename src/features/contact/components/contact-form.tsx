@@ -85,8 +85,8 @@ export function ContactForm(): ReactElement {
         throw new Error("Failed to send message");
       }
 
-      // Track conversion for Google Analytics / Google Ads
-      trackFormSubmission(data.service);
+      // Track conversion via Vercel Analytics
+      trackFormSubmission("contact", data.service);
 
       setSubmitStatus("success");
       reset();

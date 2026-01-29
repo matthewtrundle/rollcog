@@ -9,7 +9,7 @@ import { type ReactElement, useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui";
-import { trackEvent } from "@/lib/utils";
+import { trackLeadMagnetView, trackLeadMagnetDownload } from "@/lib/utils";
 import { leadMagnetSchema, type LeadMagnetFormData } from "./lead-magnet-schema";
 
 interface BlogLeadMagnetProps {
@@ -80,7 +80,7 @@ export function BlogLeadMagnet({
     setSelectedGuide(guide);
     setValue("leadMagnetType", guide);
     setShowForm(true);
-    trackEvent("lead_magnet_form_view", "Lead Magnet", `${guide}-blog`);
+    trackLeadMagnetView(guide);
   };
 
   const onSubmit = async (data: LeadMagnetFormData): Promise<void> => {
@@ -97,7 +97,7 @@ export function BlogLeadMagnet({
 
       if (!response.ok) throw new Error("Failed to submit");
 
-      trackEvent("lead_magnet_download", "Lead Magnet", `${selectedGuide}-blog`);
+      trackLeadMagnetDownload(selectedGuide, `blog-${articleSlug}`);
       setSubmitStatus("success");
     } catch {
       setSubmitStatus("error");

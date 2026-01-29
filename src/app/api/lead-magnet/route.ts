@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { readFile } from "fs/promises";
 import { join } from "path";
 import { leadMagnetSchema } from "@/components/lead-magnets/lead-magnet-schema";
@@ -234,6 +235,17 @@ This lead downloaded a free guide. Consider following up with a personalized ema
       // Log but don't fail - the lead already got their guide
       const errorData = await notificationResponse.json().catch(() => ({}));
       console.error("Lead notification email error:", errorData);
+    }
+
+    // Server-side analytics tracking (more reliable than client-side)
+    try {
+      await track("lead_magnet_converted", {
+        type: leadMagnetType,
+        quiz: quizScore !== undefined ? "yes" : "no",
+      });
+    } catch (analyticsError) {
+      // Don't fail the request if analytics fails
+      console.error("Analytics tracking error:", analyticsError);
     }
 
     return NextResponse.json({

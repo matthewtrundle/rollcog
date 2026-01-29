@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui";
-import { trackEvent } from "@/lib/utils";
+import { trackLeadMagnetView, trackLeadMagnetDownload } from "@/lib/utils";
 import { leadMagnetSchema, type LeadMagnetFormData, type LeadMagnetType } from "./lead-magnet-schema";
 import { InspectionQuiz } from "./InspectionQuiz";
 
@@ -88,7 +88,7 @@ export function LeadMagnetCard({
 
   const handleExpand = (): void => {
     setIsExpanded(true);
-    trackEvent("lead_magnet_form_view", "Lead Magnet", variant);
+    trackLeadMagnetView(variant);
   };
 
   const onSubmit = async (data: LeadMagnetFormData): Promise<void> => {
@@ -104,7 +104,8 @@ export function LeadMagnetCard({
 
       if (!response.ok) throw new Error("Failed to submit");
 
-      trackEvent("lead_magnet_download", "Lead Magnet", variant);
+      trackLeadMagnetDownload(variant, source);
+
       setSubmitStatus("success");
     } catch {
       setSubmitStatus("error");

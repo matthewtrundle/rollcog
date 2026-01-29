@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui";
-import { trackEvent } from "@/lib/utils";
+import { trackQuizStarted, trackQuizCompleted, trackLeadMagnetView, trackLeadMagnetDownload } from "@/lib/utils";
 import { leadMagnetSchema, type LeadMagnetFormData, type QuizUrgency } from "./lead-magnet-schema";
 
 // Quiz questions
@@ -76,7 +76,7 @@ export function InspectionQuiz({ onComplete, source = "quiz" }: QuizProps): Reac
 
   useEffect(() => {
     formLoadedAt.current = Date.now();
-    trackEvent("quiz_started", "Lead Magnet", source);
+    trackQuizStarted(source);
   }, [source]);
 
   const {
@@ -116,8 +116,9 @@ export function InspectionQuiz({ onComplete, source = "quiz" }: QuizProps): Reac
     if (currentQuestion < QUIZ_QUESTIONS.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
+      const results = calculateResults();
       setQuizComplete(true);
-      trackEvent("quiz_completed", "Lead Magnet", source);
+      trackQuizCompleted(results.score, results.urgency, source);
     }
   };
 
@@ -129,7 +130,7 @@ export function InspectionQuiz({ onComplete, source = "quiz" }: QuizProps): Reac
 
   const handleShowEmailForm = (): void => {
     setShowEmailForm(true);
-    trackEvent("lead_magnet_form_view", "Lead Magnet", "quiz-results");
+    trackLeadMagnetView("quiz-results");
   };
 
   const onSubmit = async (data: LeadMagnetFormData): Promise<void> => {
@@ -149,7 +150,8 @@ export function InspectionQuiz({ onComplete, source = "quiz" }: QuizProps): Reac
 
       if (!response.ok) throw new Error("Failed to submit");
 
-      trackEvent("lead_magnet_download", "Lead Magnet", "quiz-results");
+      trackLeadMagnetDownload("quiz-results", source);
+
       setSubmitStatus("success");
       onComplete?.();
     } catch {

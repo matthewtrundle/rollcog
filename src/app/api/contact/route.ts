@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from "next/server";
+import { track } from "@vercel/analytics/server";
 import { contactFormSchema } from "@/features/contact";
 import {
   generateLeadEmail,
@@ -192,6 +193,17 @@ export async function POST(request: Request): Promise<NextResponse> {
       // Log but don't fail - the lead notification was already sent
       const errorData = await confirmationResponse.json().catch(() => ({}));
       console.error("Customer confirmation email error:", errorData);
+    }
+
+    // Server-side analytics tracking (more reliable than client-side)
+    try {
+      await track("lead_submitted", {
+        service: service || "general",
+        source: source || "direct",
+      });
+    } catch (analyticsError) {
+      // Don't fail the request if analytics fails
+      console.error("Analytics tracking error:", analyticsError);
     }
 
     return NextResponse.json({

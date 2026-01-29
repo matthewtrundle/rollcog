@@ -8,13 +8,30 @@ import { twMerge } from "tailwind-merge";
 
 // Re-export analytics utilities
 export {
-  trackPageView,
-  trackEvent,
-  trackConversion,
   trackFormSubmission,
   trackPhoneClick,
   trackCTAClick,
-  trackLandingPageConversion,
+  trackEstimateRequest,
+  trackLinkClick,
+  trackServiceView,
+  trackFAQExpand,
+  trackTestimonialView,
+  trackBlogRead,
+  trackScrollDepth,
+  trackLeadMagnetView,
+  trackLeadMagnetDownload,
+  trackQuizStarted,
+  trackQuizCompleted,
+  trackTimeOnPage,
+  trackReturnVisit,
+  trackExitIntent,
+  trackFormError,
+  trackPageNotFound,
+  trackLandingPageView,
+  trackChatOpened,
+  trackChatMessage,
+  trackChatConversion,
+  getUTMParams,
 } from "./analytics";
 
 /**

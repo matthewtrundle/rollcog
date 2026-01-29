@@ -95,7 +95,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       // Track CTA click if tracking label provided
       if (trackingLabel) {
         const buttonText = typeof children === "string" ? children : trackingLabel;
-        trackCTAClick(trackingLabel, buttonText);
+        trackCTAClick(buttonText, trackingLabel);
       }
 
       // Call original onClick handler
