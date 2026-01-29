@@ -3,10 +3,13 @@
  * @module features/blog/components/blog-card
  */
 
+"use client";
+
 import { type ReactElement } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { trackCustomEventToPostgres } from "@/lib/utils/analytics";
 import type { BlogPostSummary, BlogCategory } from "../types/blog.types";
 
 interface BlogCardProps {
@@ -48,9 +51,18 @@ function formatDate(dateString: string): string {
  * ```
  */
 export function BlogCard({ post, className }: BlogCardProps): ReactElement {
+  const handleClick = (): void => {
+    trackCustomEventToPostgres("engagement", "blog_click", {
+      slug: post.slug,
+      title: post.title,
+      category: post.category,
+    });
+  };
+
   return (
     <Link
       href={`/insights/${post.slug}`}
+      onClick={handleClick}
       className={cn(
         "group block bg-white rounded-[20px] shadow-sm overflow-hidden",
         "transition-shadow duration-300 hover:shadow-md",

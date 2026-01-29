@@ -23,6 +23,37 @@ import {
 } from "recharts";
 import { WebVitalsGauge } from "@/components/admin";
 
+interface JourneyStep {
+  step_number: number;
+  event_type: string;
+  event_name: string;
+  page_path: string;
+}
+
+interface UserJourney {
+  session_id: string;
+  utm_source: string | null;
+  utm_campaign: string | null;
+  device_type: string | null;
+  started_at: string;
+  steps: JourneyStep[];
+  converted: boolean;
+}
+
+interface ConversionPath {
+  path: string;
+  occurrences: number;
+}
+
+interface UTMAttribution {
+  source: string;
+  medium: string;
+  campaign: string;
+  sessions: number;
+  conversions: number;
+  conversion_rate: number;
+}
+
 interface AnalyticsData {
   webVitals: Array<{
     name: "LCP" | "FID" | "CLS" | "TTFB" | "INP" | "FCP";
@@ -60,6 +91,9 @@ interface AnalyticsData {
     uniqueSessions: number;
     bounceRate: number;
   };
+  userJourneys?: UserJourney[];
+  conversionPaths?: ConversionPath[];
+  utmAttribution?: UTMAttribution[];
 }
 
 const DATE_RANGES = [
@@ -367,6 +401,132 @@ export default function AdminAnalyticsPage(): ReactElement {
             </ResponsiveContainer>
           </div>
         </motion.div>
+      </div>
+
+      {/* User Journeys Section */}
+      {data.userJourneys && data.userJourneys.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.9 }}
+          className="bg-gray-800 rounded-2xl p-6 border border-gray-700"
+        >
+          <h3 className="text-lg font-semibold text-white mb-6">Recent User Journeys</h3>
+          <div className="space-y-4">
+            {data.userJourneys.slice(0, 5).map((journey) => (
+              <div
+                key={journey.session_id}
+                className={`p-4 rounded-xl border ${
+                  journey.converted ? "border-green-500/30 bg-green-500/5" : "border-gray-700"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-500 font-mono">
+                      {journey.session_id.slice(0, 8)}...
+                    </span>
+                    {journey.converted && (
+                      <span className="text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">
+                        Converted
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-gray-400">
+                    {journey.utm_source && (
+                      <span className="bg-gray-700 px-2 py-0.5 rounded">{journey.utm_source}</span>
+                    )}
+                    {journey.device_type && (
+                      <span className="bg-gray-700 px-2 py-0.5 rounded">{journey.device_type}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {journey.steps.slice(0, 8).map((step, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span
+                        className={`text-xs px-2 py-1 rounded ${
+                          step.event_name === "form_submit" || step.event_name === "phone_click"
+                            ? "bg-green-500/20 text-green-400"
+                            : step.event_type === "navigation"
+                            ? "bg-blue-500/20 text-blue-400"
+                            : "bg-gray-700 text-gray-300"
+                        }`}
+                      >
+                        {step.event_name}
+                      </span>
+                      {idx < Math.min(journey.steps.length - 1, 7) && (
+                        <span className="text-gray-600">→</span>
+                      )}
+                    </div>
+                  ))}
+                  {journey.steps.length > 8 && (
+                    <span className="text-xs text-gray-500">+{journey.steps.length - 8} more</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* UTM Attribution & Conversion Paths */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* UTM Attribution */}
+        {data.utmAttribution && data.utmAttribution.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="bg-gray-800 rounded-2xl p-6 border border-gray-700"
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">UTM Attribution</h3>
+            <div className="space-y-3">
+              {data.utmAttribution.map((utm, idx) => (
+                <div key={idx} className="flex items-center justify-between py-2 border-b border-gray-700 last:border-0">
+                  <div>
+                    <span className="text-white text-sm">{utm.source}</span>
+                    {utm.campaign !== "none" && (
+                      <span className="text-gray-500 text-xs ml-2">/ {utm.campaign}</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-4 text-sm">
+                    <span className="text-gray-400">{utm.sessions} sessions</span>
+                    <span className="text-green-400">{utm.conversions} conv.</span>
+                    <span className={`font-medium ${utm.conversion_rate > 5 ? "text-green-400" : "text-gray-400"}`}>
+                      {utm.conversion_rate}%
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* Conversion Paths */}
+        {data.conversionPaths && data.conversionPaths.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 }}
+            className="bg-gray-800 rounded-2xl p-6 border border-gray-700"
+          >
+            <h3 className="text-lg font-semibold text-white mb-4">Top Conversion Paths</h3>
+            <div className="space-y-3">
+              {data.conversionPaths.slice(0, 5).map((path, idx) => (
+                <div key={idx} className="py-2 border-b border-gray-700 last:border-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-green-400 text-sm font-medium">
+                      {path.occurrences} conversion{path.occurrences > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-400 font-mono truncate" title={path.path}>
+                    {path.path.length > 80 ? path.path.slice(0, 80) + "..." : path.path}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );

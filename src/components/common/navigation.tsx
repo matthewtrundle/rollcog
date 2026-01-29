@@ -92,7 +92,7 @@ export function Navigation(): ReactElement | null {
           {/* Desktop CTA */}
           <div className="hidden lg:flex lg:items-center">
             <Link href="/contact">
-              <Button variant="primary" size="md" showArrow>
+              <Button variant="primary" size="md" showArrow trackingLabel="Nav Desktop">
                 Get Free Estimate
               </Button>
             </Link>
@@ -177,7 +177,7 @@ export function Navigation(): ReactElement | null {
                   className="pt-6 mt-4 border-t border-white/10 px-4"
                 >
                   <Link href="/contact" className="block">
-                    <Button variant="primary" size="lg" showArrow className="w-full">
+                    <Button variant="primary" size="lg" showArrow className="w-full" trackingLabel="Nav Mobile">
                       Get Free Estimate
                     </Button>
                   </Link>

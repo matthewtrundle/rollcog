@@ -5,10 +5,12 @@
  * @module components/analytics/AnalyticsProvider
  *
  * Provides comprehensive analytics tracking across the site:
+ * - Session initialization with UTM capture
  * - Scroll depth tracking
  * - Time on page tracking
  * - Returning visitor detection
  * - Form interaction tracking
+ * - Page view tracking to PostgreSQL
  */
 
 import { useEffect, useRef, type ReactElement, type ReactNode } from "react";
@@ -18,6 +20,9 @@ import {
   initTimeOnPageTracking,
   trackReturningVisitor,
   trackFormStart,
+  isNewSession,
+  initSessionInPostgres,
+  trackCustomEventToPostgres,
 } from "@/lib/utils/analytics";
 
 interface AnalyticsProviderProps {
@@ -30,6 +35,15 @@ interface AnalyticsProviderProps {
 export function AnalyticsProvider({ children }: AnalyticsProviderProps): ReactElement {
   const pathname = usePathname();
   const formStartTracked = useRef<Set<string>>(new Set());
+  const sessionInitialized = useRef(false);
+
+  // Initialize session on mount (only once per browser session)
+  useEffect(() => {
+    if (!sessionInitialized.current && isNewSession()) {
+      sessionInitialized.current = true;
+      initSessionInPostgres();
+    }
+  }, []);
 
   // Track returning visitors on mount
   useEffect(() => {
@@ -37,9 +51,16 @@ export function AnalyticsProvider({ children }: AnalyticsProviderProps): ReactEl
   }, []);
 
   // Initialize scroll and time tracking on route change
+  // Also track page views to PostgreSQL
   useEffect(() => {
     // Reset form tracking on page change
     formStartTracked.current.clear();
+
+    // Track page view to PostgreSQL (in addition to Vercel's automatic tracking)
+    trackCustomEventToPostgres("navigation", "page_view", {
+      path: pathname,
+      referrer: typeof document !== "undefined" ? document.referrer : null,
+    });
 
     // Initialize scroll depth tracking
     const cleanupScroll = initScrollTracking(pathname);

@@ -167,7 +167,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         subject: `Your Free Commercial ${guideTitle} from Rollcog Roofs`,
         html: emailHtml,
         text: emailText,
-        reply_to: "sarah@atjcorp.net",
+        reply_to: "office@rollcog.com",
         attachments: [
           {
             filename: pdfFileName,
@@ -199,7 +199,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       body: JSON.stringify({
         from: "Rollcog Leads <leads@rollcogroofing.com>",
         // TODO: Change to COMPANY.email for production
-        to: ["kim@atjcorp.net"],
+        to: ["office@rollcog.com", "kim@atjcorp.net"],
         subject: `[LEAD MAGNET] ${name} downloaded ${guideTitle}${quizUrgency === "high" ? " - HIGH URGENCY" : ""}`,
         html: `
           <h2>New Lead Magnet Download</h2>

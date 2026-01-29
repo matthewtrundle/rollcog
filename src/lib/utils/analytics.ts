@@ -7,6 +7,8 @@
  * 2. Interest - service views, FAQ clicks, time on page
  * 3. Consideration - form starts, lead magnet downloads, quiz completion
  * 4. Conversion - form submits, phone clicks
+ *
+ * Dual-destination tracking: GA4 + PostgreSQL for complete user journey analysis
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -17,6 +19,167 @@ declare global {
   }
 }
 /* eslint-enable @typescript-eslint/no-explicit-any */
+
+// ============================================
+// SESSION MANAGEMENT
+// ============================================
+
+const SESSION_KEY = "rollcog_session_id";
+const SESSION_INITIALIZED_KEY = "rollcog_session_initialized";
+
+/**
+ * Get or create a session ID for tracking user journeys
+ * Stored in sessionStorage so it persists across page loads but not browser restarts
+ */
+export function getOrCreateSessionId(): string {
+  if (typeof window === "undefined") return "";
+
+  let sessionId = sessionStorage.getItem(SESSION_KEY);
+  if (!sessionId) {
+    sessionId = crypto.randomUUID();
+    sessionStorage.setItem(SESSION_KEY, sessionId);
+  }
+  return sessionId;
+}
+
+/**
+ * Check if this is a new session that needs initialization
+ */
+export function isNewSession(): boolean {
+  if (typeof window === "undefined") return false;
+  return !sessionStorage.getItem(SESSION_INITIALIZED_KEY);
+}
+
+/**
+ * Mark session as initialized
+ */
+export function markSessionInitialized(): void {
+  if (typeof window === "undefined") return;
+  sessionStorage.setItem(SESSION_INITIALIZED_KEY, "true");
+}
+
+/**
+ * Get UTM parameters from URL
+ */
+export function getUTMParams(): Record<string, string | null> {
+  if (typeof window === "undefined") return {};
+
+  const params = new URLSearchParams(window.location.search);
+  return {
+    utm_source: params.get("utm_source"),
+    utm_medium: params.get("utm_medium"),
+    utm_campaign: params.get("utm_campaign"),
+    utm_term: params.get("utm_term"),
+    utm_content: params.get("utm_content"),
+  };
+}
+
+/**
+ * Detect device type from user agent
+ */
+export function getDeviceType(): "mobile" | "tablet" | "desktop" {
+  if (typeof window === "undefined") return "desktop";
+
+  const ua = navigator.userAgent.toLowerCase();
+  if (/mobile|android|iphone|ipod|blackberry|windows phone/i.test(ua)) {
+    return "mobile";
+  }
+  if (/tablet|ipad/i.test(ua)) {
+    return "tablet";
+  }
+  return "desktop";
+}
+
+// ============================================
+// POSTGRESQL TRACKING
+// ============================================
+
+interface PostgresEventPayload {
+  session_id: string;
+  event_type: string;
+  event_name: string;
+  page_path: string;
+  event_data?: Record<string, unknown>;
+}
+
+/**
+ * Send custom event to PostgreSQL via API
+ */
+export async function trackCustomEventToPostgres(
+  eventType: string,
+  eventName: string,
+  eventData?: Record<string, unknown>
+): Promise<void> {
+  if (typeof window === "undefined") return;
+
+  const sessionId = getOrCreateSessionId();
+  const payload: PostgresEventPayload = {
+    session_id: sessionId,
+    event_type: eventType,
+    event_name: eventName,
+    page_path: window.location.pathname,
+    event_data: eventData,
+  };
+
+  try {
+    // Use sendBeacon for better reliability on page unload, fallback to fetch
+    const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    const sent = navigator.sendBeacon?.("/api/analytics/track", blob);
+
+    if (!sent) {
+      // Fallback to fetch for browsers that don't support sendBeacon
+      fetch("/api/analytics/track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }).catch(() => {
+        // Silently fail - analytics shouldn't break the app
+      });
+    }
+  } catch {
+    // Silently fail - analytics shouldn't break the app
+  }
+}
+
+/**
+ * Initialize a new session in PostgreSQL
+ */
+export async function initSessionInPostgres(): Promise<void> {
+  if (typeof window === "undefined") return;
+
+  const sessionId = getOrCreateSessionId();
+  const utmParams = getUTMParams();
+
+  const sessionData = {
+    session_id: sessionId,
+    first_page: window.location.pathname,
+    entry_referrer: document.referrer || null,
+    utm_source: utmParams.utm_source,
+    utm_medium: utmParams.utm_medium,
+    utm_campaign: utmParams.utm_campaign,
+    device_type: getDeviceType(),
+  };
+
+  try {
+    await fetch("/api/analytics/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(sessionData),
+    });
+
+    // Track session_start event
+    await trackCustomEventToPostgres("session", "session_start", {
+      ...utmParams,
+      referrer: document.referrer,
+      device_type: getDeviceType(),
+    });
+
+    markSessionInitialized();
+  } catch {
+    // Silently fail
+  }
+}
 
 // ============================================
 // CORE TRACKING FUNCTIONS
@@ -34,7 +197,7 @@ export function trackPageView(url: string): void {
 }
 
 /**
- * Track a custom event in Google Analytics
+ * Track a custom event in Google Analytics AND PostgreSQL
  */
 export function trackEvent(
   action: string,
@@ -42,6 +205,7 @@ export function trackEvent(
   label?: string,
   value?: number
 ): void {
+  // Send to Google Analytics
   if (typeof window !== "undefined" && window.gtag) {
     window.gtag("event", action, {
       event_category: category,
@@ -49,6 +213,13 @@ export function trackEvent(
       value: value,
     });
   }
+
+  // Send to PostgreSQL for journey analysis
+  trackCustomEventToPostgres(category.toLowerCase(), action, {
+    category,
+    label,
+    value,
+  });
 
   // Also log to console in development
   if (process.env.NODE_ENV === "development") {

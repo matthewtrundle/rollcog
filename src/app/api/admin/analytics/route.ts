@@ -34,6 +34,37 @@ interface DailyTraffic {
   sessions: number;
 }
 
+interface JourneyStep {
+  step_number: number;
+  event_type: string;
+  event_name: string;
+  page_path: string;
+}
+
+interface UserJourney {
+  session_id: string;
+  utm_source: string | null;
+  utm_campaign: string | null;
+  device_type: string | null;
+  started_at: string;
+  steps: JourneyStep[];
+  converted: boolean;
+}
+
+interface ConversionPath {
+  path: string;
+  occurrences: number;
+}
+
+interface UTMAttribution {
+  source: string;
+  medium: string;
+  campaign: string;
+  sessions: number;
+  conversions: number;
+  conversion_rate: number;
+}
+
 interface AnalyticsResponse {
   webVitals: WebVital[];
   pageStats: PageStats[];
@@ -47,6 +78,9 @@ interface AnalyticsResponse {
     bounceRate: number;
     avgSessionDuration: number | null;
   };
+  userJourneys?: UserJourney[];
+  conversionPaths?: ConversionPath[];
+  utmAttribution?: UTMAttribution[];
 }
 
 /**
@@ -240,6 +274,145 @@ export async function GET(request: Request): Promise<NextResponse> {
     const totalSessions = parseInt(bounceResult.rows[0]?.total || "1", 10);
     const bounceRate = Math.round((bounced / totalSessions) * 100);
 
+    // Get recent user journeys (last 10 sessions with activity)
+    let userJourneys: UserJourney[] = [];
+    let conversionPaths: ConversionPath[] = [];
+    let utmAttribution: UTMAttribution[] = [];
+
+    try {
+      // Get sessions with their journeys
+      const journeySessionsResult = await query<{
+        session_id: string;
+        utm_source: string | null;
+        utm_campaign: string | null;
+        device_type: string | null;
+        started_at: string;
+      }>(
+        `SELECT s.session_id, s.utm_source, s.utm_campaign, s.device_type, s.started_at
+         FROM analytics_sessions s
+         WHERE s.started_at >= ${intervalClause}
+         ORDER BY s.started_at DESC
+         LIMIT 10`
+      );
+
+      // Get journey steps for these sessions
+      const sessionIds = journeySessionsResult.rows.map(r => r.session_id);
+      if (sessionIds.length > 0) {
+        const journeyStepsResult = await query<{
+          session_id: string;
+          step_number: string;
+          event_type: string;
+          event_name: string;
+          page_path: string;
+        }>(
+          `SELECT session_id, step_number, event_type, event_name, page_path
+           FROM analytics_user_journeys
+           WHERE session_id = ANY($1)
+           ORDER BY session_id, step_number`,
+          [sessionIds]
+        );
+
+        // Check for conversions
+        const conversionSessionsResult = await query<{ session_id: string }>(
+          `SELECT DISTINCT session_id
+           FROM analytics_user_journeys
+           WHERE session_id = ANY($1)
+             AND event_name IN ('form_submit', 'phone_click')`,
+          [sessionIds]
+        );
+        const convertedSessions = new Set(conversionSessionsResult.rows.map(r => r.session_id));
+
+        // Group steps by session
+        const stepsBySession = new Map<string, JourneyStep[]>();
+        journeyStepsResult.rows.forEach(row => {
+          const steps = stepsBySession.get(row.session_id) || [];
+          steps.push({
+            step_number: parseInt(row.step_number, 10),
+            event_type: row.event_type,
+            event_name: row.event_name,
+            page_path: row.page_path || "/",
+          });
+          stepsBySession.set(row.session_id, steps);
+        });
+
+        userJourneys = journeySessionsResult.rows.map(session => ({
+          session_id: session.session_id,
+          utm_source: session.utm_source,
+          utm_campaign: session.utm_campaign,
+          device_type: session.device_type,
+          started_at: session.started_at,
+          steps: stepsBySession.get(session.session_id) || [],
+          converted: convertedSessions.has(session.session_id),
+        }));
+      }
+
+      // Get common conversion paths
+      const conversionPathsResult = await query<{ path: string; occurrences: string }>(
+        `WITH conversion_sessions AS (
+           SELECT DISTINCT session_id
+           FROM analytics_user_journeys
+           WHERE event_name IN ('form_submit', 'phone_click')
+             AND timestamp >= ${intervalClause}
+         ),
+         session_paths AS (
+           SELECT
+             j.session_id,
+             STRING_AGG(
+               COALESCE(j.event_name, 'unknown'),
+               ' -> ' ORDER BY j.step_number
+             ) as path
+           FROM analytics_user_journeys j
+           INNER JOIN conversion_sessions cs ON j.session_id = cs.session_id
+           WHERE j.timestamp >= ${intervalClause}
+           GROUP BY j.session_id
+         )
+         SELECT path, COUNT(*) as occurrences
+         FROM session_paths
+         GROUP BY path
+         ORDER BY occurrences DESC
+         LIMIT 10`
+      );
+      conversionPaths = conversionPathsResult.rows.map(row => ({
+        path: row.path,
+        occurrences: parseInt(row.occurrences, 10),
+      }));
+
+      // Get UTM attribution
+      const utmResult = await query<{
+        source: string;
+        medium: string;
+        campaign: string;
+        sessions: string;
+        conversions: string;
+      }>(
+        `SELECT
+           COALESCE(s.utm_source, 'direct') as source,
+           COALESCE(s.utm_medium, 'none') as medium,
+           COALESCE(s.utm_campaign, 'none') as campaign,
+           COUNT(DISTINCT s.session_id) as sessions,
+           COUNT(DISTINCT CASE WHEN j.event_name IN ('form_submit', 'phone_click') THEN s.session_id END) as conversions
+         FROM analytics_sessions s
+         LEFT JOIN analytics_user_journeys j ON s.session_id = j.session_id
+         WHERE s.started_at >= ${intervalClause}
+         GROUP BY s.utm_source, s.utm_medium, s.utm_campaign
+         ORDER BY sessions DESC
+         LIMIT 10`
+      );
+      utmAttribution = utmResult.rows.map(row => ({
+        source: row.source,
+        medium: row.medium,
+        campaign: row.campaign,
+        sessions: parseInt(row.sessions, 10),
+        conversions: parseInt(row.conversions, 10),
+        conversion_rate: Math.round(
+          (parseInt(row.conversions, 10) / Math.max(parseInt(row.sessions, 10), 1)) * 100
+        ),
+      }));
+    } catch (journeyError) {
+      // Journey tables might not exist yet - silently continue
+      console.warn("Journey queries failed (tables may not exist):", journeyError);
+    }
+
     const response: AnalyticsResponse = {
       webVitals,
       pageStats,
@@ -253,6 +426,9 @@ export async function GET(request: Request): Promise<NextResponse> {
         bounceRate,
         avgSessionDuration: null,
       },
+      userJourneys,
+      conversionPaths,
+      utmAttribution,
     };
 
     return NextResponse.json(response);

@@ -7,7 +7,7 @@ export const COMPANY = {
   name: "Rollcog Roofs",
   legalName: "Rollcog Roofing LLC",
   phone: "630-655-8256",
-  email: "sarah@atjcorp.net",
+  email: "office@rollcog.com",
   address: {
     street: "629 Executive Dr.",
     city: "Willowbrook",

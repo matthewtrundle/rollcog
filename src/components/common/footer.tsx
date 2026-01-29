@@ -10,6 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Container } from "@/components/ui";
+import { trackPhoneClick } from "@/lib/utils/analytics";
 import {
   COMPANY,
   NAV_LINKS,
@@ -102,6 +103,19 @@ export function Footer(): ReactElement | null {
                 Contact
               </h3>
               <div className="space-y-4 text-sm">
+                <a
+                  href={`tel:${COMPANY.phone}`}
+                  onClick={() => trackPhoneClick("Footer")}
+                  className="block text-white/80 hover:text-white transition-colors font-medium"
+                >
+                  {COMPANY.phone}
+                </a>
+                <a
+                  href={`mailto:${COMPANY.email}`}
+                  className="block text-white/80 hover:text-white transition-colors"
+                >
+                  {COMPANY.email}
+                </a>
                 <address className="text-white/70 not-italic">
                   {COMPANY.address.street}
                   <br />
