@@ -86,7 +86,7 @@ export default function FlatRoofRepairPage(): ReactElement {
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
               <Image
-                src="/images/flat-roof-repair.png"
+                src="/images/flat-roof-repair.webp"
                 alt="Commercial roofing workers inspecting and repairing flat roof"
                 fill
                 className="object-cover"

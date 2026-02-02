@@ -7,16 +7,16 @@ import { type ReactElement } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import type { Metadata } from "next";
-import { Button, Section } from "@/components/ui";
+import { Button, Section, LazyVideo } from "@/components/ui";
 import { SERVICES, COMPANY } from "@/lib/utils/constants";
 import { generatePageMetadata } from "@/lib/seo";
 
 // Service images mapping
 const SERVICE_IMAGES: Record<string, string> = {
-  "tpo-roofing": "/images/tpo-roofing-installation.png",
-  "mod-bit": "/images/mod-bit-torch-applied.png",
-  "flat-roof-repair": "/images/flat-roof-repair.png",
-  "commercial-industrial": "/images/commercial-warehouse-roofing.png",
+  "tpo-roofing": "/images/tpo-roofing-installation.webp",
+  "mod-bit": "/images/mod-bit-torch-applied.webp",
+  "flat-roof-repair": "/images/flat-roof-repair.webp",
+  "commercial-industrial": "/images/commercial-warehouse-roofing.webp",
 };
 
 export const metadata: Metadata = generatePageMetadata({
@@ -45,16 +45,11 @@ export default function ServicesPage(): ReactElement {
 
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
+              <LazyVideo
+                src="/videos/commercial-building.mp4"
+                poster="/images/roofing-inspection.webp"
                 className="absolute inset-0 w-full h-full object-cover"
-                poster="/images/roofing-inspection.png"
-              >
-                <source src="/videos/commercial-building.mp4" type="video/mp4" />
-              </video>
+              />
             </div>
           </div>
         </div>
@@ -74,7 +69,7 @@ export default function ServicesPage(): ReactElement {
                 <div className={`lg:col-span-5 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
                   <div className="relative aspect-[4/3] rounded-xl overflow-hidden shadow-lg group-hover:shadow-xl transition-shadow">
                     <Image
-                      src={SERVICE_IMAGES[service.id] || "/images/roofing-inspection.png"}
+                      src={SERVICE_IMAGES[service.id] || "/images/roofing-inspection.webp"}
                       alt={service.name}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"

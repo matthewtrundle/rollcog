@@ -83,7 +83,7 @@ export default function TPORoofingPage(): ReactElement {
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
               <Image
-                src="/images/tpo-roofing-installation.png"
+                src="/images/tpo-roofing-installation.webp"
                 alt="Professional roofer heat-welding TPO roofing membrane"
                 fill
                 className="object-cover"

@@ -88,7 +88,7 @@ export default function CommercialIndustrialPage(): ReactElement {
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
               <Image
-                src="/images/commercial-warehouse-roofing.png"
+                src="/images/commercial-warehouse-roofing.webp"
                 alt="Large industrial warehouse with newly installed commercial flat roof"
                 fill
                 className="object-cover"

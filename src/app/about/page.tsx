@@ -6,7 +6,7 @@
 import { type ReactElement } from "react";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { Button, Section } from "@/components/ui";
+import { Button, Section, LazyVideo } from "@/components/ui";
 import { COMPANY, CERTIFICATIONS } from "@/lib/utils/constants";
 import { generatePageMetadata } from "@/lib/seo";
 
@@ -48,16 +48,11 @@ export default function AboutPage(): ReactElement {
 
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
+              <LazyVideo
+                src="/videos/commercial-building.mp4"
+                poster="/images/hero-roofing-team.webp"
                 className="absolute inset-0 w-full h-full object-cover"
-                poster="/images/hero-roofing-team.png"
-              >
-                <source src="/videos/commercial-building.mp4" type="video/mp4" />
-              </video>
+              />
             </div>
           </div>
         </div>
@@ -99,16 +94,11 @@ export default function AboutPage(): ReactElement {
           {/* Video Side */}
           <div className="lg:col-span-5 order-2 lg:order-1">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
+              <LazyVideo
+                src="/videos/aerial-drone.mp4"
+                poster="/images/hero-roofing-team.webp"
                 className="absolute inset-0 w-full h-full object-cover"
-                poster="/images/hero-roofing-team.png"
-              >
-                <source src="/videos/aerial-drone.mp4" type="video/mp4" />
-              </video>
+              />
             </div>
           </div>
 

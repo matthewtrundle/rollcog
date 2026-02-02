@@ -8,3 +8,4 @@ export { Container } from "./container";
 export { Section } from "./section";
 export { Card, CardHeader, CardTitle, CardContent } from "./card";
 export { Accordion, AccordionItem } from "./accordion";
+export { LazyVideo } from "./lazy-video";

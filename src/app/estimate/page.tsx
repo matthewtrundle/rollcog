@@ -28,7 +28,7 @@ import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, type Variants, useInView } from "framer-motion";
-import { Button } from "@/components/ui";
+import { Button, LazyVideo } from "@/components/ui";
 import { LeadMagnetCard } from "@/components/lead-magnets";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
 import { COMPANY } from "@/lib/utils/constants";
@@ -43,32 +43,46 @@ const SOURCE_CONFIG: Record<string, {
   accentFeature: string;
 }> = {
   repair: {
-    headline: "Emergency Roof Repair",
-    subheadline: "Fast response. Expert repairs. Protect your business today.",
+    headline: "Emergency Commercial Roof Repair",
+    subheadline: "Fast response in Chicago & Chicagoland. Expert repairs. Protect your business today.",
     video: "/videos/aerial-drone.mp4",
-    poster: "/images/flat-roof-repair.png",
+    poster: "/images/flat-roof-repair.webp",
     accentFeature: "Emergency repairs within 5 days",
   },
   "flat-roof": {
-    headline: "Flat Roof Specialists",
-    subheadline: "TPO, Modified Bitumen & EPDM experts with 27+ years experience.",
+    headline: "Chicago Flat Roof Specialists",
+    subheadline: "TPO, Modified Bitumen & EPDM experts serving Chicagoland for 27+ years.",
     video: "/videos/aerial-scene.mp4",
-    poster: "/images/tpo-roofing-installation.png",
+    poster: "/images/tpo-roofing-installation.webp",
     accentFeature: "20-30 year roof lifespan",
   },
   industrial: {
     headline: "Industrial Roofing Experts",
-    subheadline: "Large-scale projects. Minimal disruption. On-time delivery.",
+    subheadline: "Large-scale projects across Chicago & the Midwest. Minimal disruption. On-time delivery.",
     video: "/videos/commercial-building.mp4",
-    poster: "/images/commercial-warehouse-roofing.png",
+    poster: "/images/commercial-warehouse-roofing.webp",
     accentFeature: "Multi-state coverage",
   },
   general: {
-    headline: "Commercial Roofing",
-    subheadline: "GAF Certified contractors with 27+ years of excellence.",
+    headline: "Commercial Roofing Chicago",
+    subheadline: "GAF Certified contractors serving Chicagoland with 27+ years of excellence.",
     video: "/videos/hero-cinematic.mp4",
-    poster: "/images/hero-roofing-team.png",
+    poster: "/images/hero-roofing-team.webp",
     accentFeature: "24-hour estimate delivery",
+  },
+  tpo: {
+    headline: "TPO Roofing Installation",
+    subheadline: "Energy-efficient TPO roofing for Chicago commercial buildings. GAF Certified.",
+    video: "/videos/aerial-scene.mp4",
+    poster: "/images/tpo-roofing-installation.webp",
+    accentFeature: "Up to 30% cooling cost savings",
+  },
+  "mod-bit": {
+    headline: "Modified Bitumen Roofing",
+    subheadline: "Multi-layer protection for Chicago commercial properties. 40+ year proven track record.",
+    video: "/videos/aerial-drone.mp4",
+    poster: "/images/mod-bit-torch-applied.webp",
+    accentFeature: "Superior puncture resistance",
   },
 };
 
@@ -119,7 +133,7 @@ const TESTIMONIALS = [
     name: "Michael Chen",
     title: "Facility Director",
     company: "Midwest Logistics",
-    image: "/images/hero-roofing-team.png",
+    image: "/images/hero-roofing-team.webp",
     rating: 5,
   },
   {
@@ -127,7 +141,7 @@ const TESTIMONIALS = [
     name: "Sarah Thompson",
     title: "Property Manager",
     company: "Sterling Properties",
-    image: "/images/roofing-inspection.png",
+    image: "/images/roofing-inspection.webp",
     rating: 5,
   },
 ];
@@ -352,17 +366,11 @@ function HeroSection({
               className="mt-8 relative rounded-2xl overflow-hidden shadow-2xl"
             >
               <div className="aspect-video relative overflow-hidden">
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
-                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                <LazyVideo
+                  src={config.video}
                   poster={config.poster}
-                >
-                  <source src={config.video} type="video/mp4" />
-                </video>
+                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                />
                 {/* Light overlay to soften video and hide watermark */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/50 via-transparent to-[var(--charcoal)]/20" />
               </div>
@@ -845,6 +853,7 @@ function TestimonialsSection(): ReactElement {
                     src={testimonial.image}
                     alt={testimonial.name}
                     fill
+                    loading="lazy"
                     className="object-cover"
                   />
                 </div>

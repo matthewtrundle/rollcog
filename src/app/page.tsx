@@ -9,17 +9,16 @@ import { type ReactElement, useState, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useScroll, useTransform, type Variants } from "framer-motion";
-import { Button, Section } from "@/components/ui";
-import { LoadingScreen } from "@/components/common/loading-screen";
+import { Button, Section, LazyVideo } from "@/components/ui";
 import { trackServiceView } from "@/lib/utils/analytics";
 import { COMPANY, SERVICES } from "@/lib/utils/constants";
 
 // Service images mapping
 const SERVICE_IMAGES: Record<string, string> = {
-  "tpo-roofing": "/images/tpo-roofing-installation.png",
-  "mod-bit": "/images/mod-bit-torch-applied.png",
-  "flat-roof-repair": "/images/flat-roof-repair.png",
-  "commercial-industrial": "/images/commercial-warehouse-roofing.png",
+  "tpo-roofing": "/images/tpo-roofing-installation.webp",
+  "mod-bit": "/images/mod-bit-torch-applied.webp",
+  "flat-roof-repair": "/images/flat-roof-repair.webp",
+  "commercial-industrial": "/images/commercial-warehouse-roofing.webp",
 };
 
 // Enhanced service details with rich descriptions and features
@@ -80,8 +79,6 @@ const slideInRight: Variants = {
 export default function HomePage(): ReactElement {
   return (
     <>
-      <LoadingScreen minDisplayTime={1200} />
-
       {/* Hero - Full-bleed with parallax */}
       <HeroSection />
 
@@ -143,7 +140,7 @@ function HeroSection(): ReactElement {
                 className="mt-6 text-base lg:text-lg text-white/80 leading-relaxed max-w-lg"
               >
                 Premium flat roof solutions for commercial and industrial buildings.
-                Trusted by property managers and developers across the Midwest.
+                Serving Chicago, Chicagoland, and the greater Midwest region.
               </motion.p>
 
               <motion.div variants={fadeInUp} className="mt-8 flex flex-col sm:flex-row gap-4">
@@ -205,17 +202,11 @@ function HeroSection(): ReactElement {
                 className="relative aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
                 style={{ scale: videoScale }}
               >
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  preload="auto"
+                <LazyVideo
+                  src="/videos/aerial-drone.mp4"
+                  poster="/images/hero-roofing-team.webp"
                   className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
-                  poster="/images/hero-roofing-team.png"
-                >
-                  <source src="/videos/aerial-drone.mp4" type="video/mp4" />
-                </video>
+                />
                 {/* Subtle vignette overlay - also helps hide any remaining watermark */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
               </motion.div>
@@ -276,10 +267,10 @@ function StatementSection(): ReactElement {
             variants={fadeInUp}
             className="mt-6 text-lg text-[var(--text-body)] leading-relaxed"
           >
-            For over {COMPANY.experience} years, we&apos;ve worked with general
-            contractors, developers, and facility managers who need roofing
-            partners they can trust. No surprises, no games—just honest work at
-            fair prices.
+            For over {COMPANY.experience} years, we&apos;ve served Chicago and
+            Chicagoland businesses—from general contractors to facility managers
+            who need roofing partners they can trust. No surprises, no games—just
+            honest work at fair prices.
           </motion.p>
           <motion.div variants={fadeInUp} className="mt-8">
             <Link href="/about">
@@ -299,16 +290,11 @@ function StatementSection(): ReactElement {
           className="lg:col-span-7"
         >
           <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden group">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
+            <LazyVideo
+              src="/videos/aerial-scene.mp4"
+              poster="/images/commercial-warehouse-roofing.webp"
               className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left transition-transform duration-700 group-hover:scale-[1.15]"
-              poster="/images/commercial-warehouse-roofing.png"
-            >
-              <source src="/videos/aerial-scene.mp4" type="video/mp4" />
-            </video>
+            />
           </div>
         </motion.div>
       </div>
@@ -438,9 +424,10 @@ function ServicesSection(): ReactElement {
                 className="absolute inset-0"
               >
                 <Image
-                  src="/images/roofing-inspection.png"
+                  src="/images/roofing-inspection.webp"
                   alt="Professional roof inspection"
                   fill
+                  loading="lazy"
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
@@ -464,9 +451,10 @@ function ServicesSection(): ReactElement {
                   className="absolute inset-0"
                 >
                   <Image
-                    src={SERVICE_IMAGES[service.id] || "/images/roofing-inspection.png"}
+                    src={SERVICE_IMAGES[service.id] || "/images/roofing-inspection.webp"}
                     alt={SERVICE_ALT_TEXT[service.id] || `${service.name} - professional roofing service`}
                     fill
+                    loading="lazy"
                     className="object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />

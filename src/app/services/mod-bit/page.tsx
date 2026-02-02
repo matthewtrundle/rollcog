@@ -84,7 +84,7 @@ export default function ModBitPage(): ReactElement {
           <div className="lg:col-span-7">
             <div className="relative aspect-[4/3] rounded-[var(--radius-large)] overflow-hidden">
               <Image
-                src="/images/mod-bit-torch-applied.png"
+                src="/images/mod-bit-torch-applied.webp"
                 alt="Commercial roofer applying modified bitumen with propane torch"
                 fill
                 className="object-cover"
