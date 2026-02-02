@@ -14,9 +14,9 @@ import {
   generateBreadcrumbSchema,
 } from "@/lib/seo";
 
-const SERVICE_NAME = "Modified Bitumen Roofing";
+const SERVICE_NAME = "Chicago Modified Bitumen Roofing";
 const SERVICE_DESCRIPTION =
-  "Durable modified bitumen roofing systems for commercial and industrial buildings. Multi-layer protection with proven performance.";
+  "Durable modified bitumen roofing for Chicago commercial buildings. Multi-layer protection that handles Midwest weather extremes.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -75,9 +75,8 @@ export default function ModBitPage(): ReactElement {
             </nav>
             <h1 className="heading-hero">{SERVICE_NAME}</h1>
             <p className="mt-8 text-xl text-gray-300 leading-relaxed">
-              Multi-layer protection with proven performance. Ideal for
-              buildings that need to withstand heavy foot traffic and extreme
-              weather.
+              Multi-layer protection built for Chicago&apos;s extreme weather. Ideal for
+              buildings that need to withstand heavy foot traffic and temperature swings.
             </p>
           </div>
 

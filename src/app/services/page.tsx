@@ -37,8 +37,8 @@ export default function ServicesPage(): ReactElement {
           <div className="lg:col-span-5">
             <h1 className="heading-hero">Our Services</h1>
             <p className="mt-8 text-xl text-white/70 leading-relaxed">
-              Comprehensive roofing solutions for businesses of all sizes. From
-              new installations to repairs and maintenance—backed by GAF
+              Comprehensive commercial roofing solutions for Chicago and Chicagoland
+              businesses. From new installations to repairs—backed by GAF
               Certification and {COMPANY.experience}+ years of experience.
             </p>
           </div>

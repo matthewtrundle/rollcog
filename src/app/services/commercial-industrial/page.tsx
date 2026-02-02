@@ -15,9 +15,9 @@ import {
   generateBreadcrumbSchema,
 } from "@/lib/seo";
 
-const SERVICE_NAME = "Commercial & Industrial Roofing";
+const SERVICE_NAME = "Chicago Commercial & Industrial Roofing";
 const SERVICE_DESCRIPTION =
-  "Full-service roofing solutions for commercial and industrial facilities. Warehouses, factories, office buildings, retail, and more.";
+  "Full-service commercial and industrial roofing in Chicago & Chicagoland. Warehouses, factories, office buildings, retail centers, and more.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -79,7 +79,7 @@ export default function CommercialIndustrialPage(): ReactElement {
             </nav>
             <h1 className="heading-hero">{SERVICE_NAME}</h1>
             <p className="mt-8 text-xl text-gray-300 leading-relaxed">
-              From small retail spaces to large industrial complexes.
+              Serving Chicago and Chicagoland—from retail spaces to industrial complexes.
               Comprehensive roofing for businesses of all sizes, backed by{" "}
               {COMPANY.experience}+ years of experience.
             </p>

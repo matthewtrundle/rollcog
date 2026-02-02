@@ -14,9 +14,9 @@ import {
   generateBreadcrumbSchema,
 } from "@/lib/seo";
 
-const SERVICE_NAME = "TPO Commercial Roofing";
+const SERVICE_NAME = "Chicago TPO Commercial Roofing";
 const SERVICE_DESCRIPTION =
-  "Energy-efficient TPO single-ply roofing systems for commercial buildings. Durable, reflective, and cost-effective flat roof solutions.";
+  "Energy-efficient TPO roofing for Chicago commercial buildings. Durable, reflective single-ply systems that reduce cooling costs up to 30%.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -75,7 +75,7 @@ export default function TPORoofingPage(): ReactElement {
             </nav>
             <h1 className="heading-hero">{SERVICE_NAME}</h1>
             <p className="mt-8 text-xl text-gray-300 leading-relaxed">
-              The leading choice for commercial flat roofs. Energy-efficient,
+              Chicago&apos;s leading choice for commercial flat roofs. Energy-efficient,
               durable, and backed by GAF Certified installation.
             </p>
           </div>

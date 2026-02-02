@@ -14,9 +14,9 @@ import {
   generateBreadcrumbSchema,
 } from "@/lib/seo";
 
-const SERVICE_NAME = "Flat Roof Repair & Replacement";
+const SERVICE_NAME = "Chicago Flat Roof Repair & Replacement";
 const SERVICE_DESCRIPTION =
-  "Expert repair and replacement services for commercial flat roofs. Emergency repairs within 5 days. Free inspections available.";
+  "Expert flat roof repair and replacement in Chicago & Chicagoland. Emergency repairs within 5 days. Free inspections for commercial buildings.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -78,8 +78,8 @@ export default function FlatRoofRepairPage(): ReactElement {
             </nav>
             <h1 className="heading-hero">{SERVICE_NAME}</h1>
             <p className="mt-8 text-xl text-gray-300 leading-relaxed">
-              From minor repairs to complete replacements. Emergency repairs
-              within 5 days to protect your building and inventory.
+              Serving Chicago and Chicagoland businesses with fast, reliable flat
+              roof repairs. Emergency repairs within 5 days to protect your building and inventory.
             </p>
           </div>
 
