@@ -202,12 +202,23 @@ function HeroSection(): ReactElement {
                 className="relative aspect-video rounded-lg overflow-hidden shadow-2xl ring-1 ring-white/10"
                 style={{ scale: videoScale }}
               >
-                <LazyVideo
-                  src="/videos/aerial-drone.mp4"
-                  poster="/images/hero-roofing-team.webp"
-                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                {/* Static image on mobile for faster LCP */}
+                <Image
+                  src="/images/hero-roofing-team.webp"
+                  alt="Rollcog commercial roofing team"
+                  fill
+                  priority
+                  className="absolute inset-0 w-full h-full object-cover lg:hidden"
                 />
-                {/* Subtle vignette overlay - also helps hide any remaining watermark */}
+                {/* Video only on desktop */}
+                <div className="hidden lg:block absolute inset-0">
+                  <LazyVideo
+                    src="/videos/aerial-drone.mp4"
+                    poster="/images/hero-roofing-team.webp"
+                    className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                  />
+                </div>
+                {/* Subtle vignette overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20" />
               </motion.div>
               {/* Cinematic label */}

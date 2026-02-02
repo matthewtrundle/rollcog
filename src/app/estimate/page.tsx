@@ -101,7 +101,7 @@ const staggerContainer: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: { staggerChildren: 0.1, delayChildren: 0.1 },
+    transition: { staggerChildren: 0.05 },
   },
 };
 
@@ -360,18 +360,29 @@ function HeroSection({
               <span className="text-white/90 font-medium text-sm">{config.accentFeature}</span>
             </motion.div>
 
-            {/* Contained Video Box */}
+            {/* Contained Video/Image Box - Static image on mobile for faster LCP */}
             <motion.div
               variants={fadeInUp}
               className="mt-8 relative rounded-2xl overflow-hidden shadow-2xl"
             >
               <div className="aspect-video relative overflow-hidden">
-                <LazyVideo
-                  src={config.video}
-                  poster={config.poster}
-                  className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                {/* Static image for mobile (faster LCP) */}
+                <Image
+                  src={config.poster}
+                  alt={config.headline}
+                  fill
+                  priority
+                  className="absolute inset-0 w-full h-full object-cover lg:hidden"
                 />
-                {/* Light overlay to soften video and hide watermark */}
+                {/* Video only on desktop */}
+                <div className="hidden lg:block absolute inset-0">
+                  <LazyVideo
+                    src={config.video}
+                    poster={config.poster}
+                    className="absolute inset-0 w-full h-full object-cover scale-110 origin-top-left"
+                  />
+                </div>
+                {/* Light overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-[var(--charcoal)]/50 via-transparent to-[var(--charcoal)]/20" />
               </div>
             </motion.div>
@@ -410,9 +421,9 @@ function HeroSection({
 
           {/* Right Column - Form Card */}
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
           >
             <div className="relative">
               {/* Glow effect */}
