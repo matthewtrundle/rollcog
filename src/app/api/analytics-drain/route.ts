@@ -194,6 +194,118 @@ function normalizeEvent(rawEvent: VercelAnalyticsEvent | LegacyEvent): {
 }
 
 /**
+ * Extract UTM parameters and path from URL
+ */
+function parseUrl(href: string): {
+  path: string;
+  utmSource: string | null;
+  utmMedium: string | null;
+  utmCampaign: string | null;
+  utmTerm: string | null;
+  utmContent: string | null;
+  source: string | null;
+  gclid: string | null;
+} {
+  try {
+    const url = new URL(href);
+    return {
+      path: url.pathname,
+      utmSource: url.searchParams.get("utm_source"),
+      utmMedium: url.searchParams.get("utm_medium"),
+      utmCampaign: url.searchParams.get("utm_campaign"),
+      utmTerm: url.searchParams.get("utm_term"),
+      utmContent: url.searchParams.get("utm_content"),
+      source: url.searchParams.get("source"), // Custom source param
+      gclid: url.searchParams.get("gclid"), // Google Ads click ID
+    };
+  } catch {
+    return {
+      path: href,
+      utmSource: null,
+      utmMedium: null,
+      utmCampaign: null,
+      utmTerm: null,
+      utmContent: null,
+      source: null,
+      gclid: null,
+    };
+  }
+}
+
+/**
+ * Ensure session exists in analytics_sessions table
+ */
+async function ensureSession(
+  pool: import("pg").Pool,
+  sessionId: string,
+  firstPage: string,
+  referrer: string | null,
+  country: string | null,
+  deviceType: string | null,
+  timestamp: Date
+): Promise<void> {
+  const parsed = parseUrl(firstPage);
+
+  // Determine UTM source - check for gclid (Google Ads)
+  let utmSource = parsed.utmSource || parsed.source;
+  let utmMedium = parsed.utmMedium;
+
+  if (parsed.gclid && !utmSource) {
+    utmSource = "google";
+    utmMedium = utmMedium || "cpc";
+  }
+
+  // Try to insert new session (ignore if exists)
+  await pool.query(
+    `INSERT INTO analytics_sessions
+     (session_id, first_page, entry_referrer, utm_source, utm_medium, utm_campaign, utm_term, utm_content, device_type, country, started_at, last_activity_at)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $11)
+     ON CONFLICT (session_id) DO UPDATE SET last_activity_at = $11`,
+    [
+      sessionId,
+      parsed.path,
+      referrer,
+      utmSource,
+      utmMedium,
+      parsed.utmCampaign,
+      parsed.utmTerm,
+      parsed.utmContent,
+      deviceType,
+      country,
+      timestamp,
+    ]
+  );
+}
+
+/**
+ * Add journey event for session
+ */
+async function addJourneyEvent(
+  pool: import("pg").Pool,
+  sessionId: string,
+  eventType: string,
+  pagePath: string | null,
+  eventName: string,
+  eventData: Record<string, unknown> | null,
+  timestamp: Date
+): Promise<void> {
+  // Get next step number for this session
+  const stepResult = await pool.query(
+    `SELECT COALESCE(MAX(step_number), 0) + 1 as next_step
+     FROM analytics_user_journeys WHERE session_id = $1`,
+    [sessionId]
+  );
+  const stepNumber = stepResult.rows[0]?.next_step || 1;
+
+  await pool.query(
+    `INSERT INTO analytics_user_journeys
+     (session_id, step_number, event_type, page_path, event_name, event_data, timestamp)
+     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+    [sessionId, stepNumber, eventType, pagePath, eventName, eventData ? JSON.stringify(eventData) : "{}", timestamp]
+  );
+}
+
+/**
  * Insert normalized event into PostgreSQL
  */
 async function insertEvent(normalized: ReturnType<typeof normalizeEvent>): Promise<void> {
@@ -207,6 +319,19 @@ async function insertEvent(normalized: ReturnType<typeof normalizeEvent>): Promi
   const pool = new Pool({ connectionString, ssl: { rejectUnauthorized: false } });
 
   try {
+    // Ensure session exists (for all event types)
+    if (normalized.sessionId && normalized.sessionId !== "0") {
+      await ensureSession(
+        pool,
+        normalized.sessionId,
+        normalized.href,
+        normalized.referrer,
+        normalized.country,
+        normalized.deviceType,
+        normalized.timestamp
+      );
+    }
+
     if (normalized.eventType === "pageview") {
       console.log("Inserting pageview:", {
         timestamp: normalized.timestamp.toISOString(),
@@ -232,6 +357,12 @@ async function insertEvent(normalized: ReturnType<typeof normalizeEvent>): Promi
         ]
       );
       console.log("Pageview inserted, id=", result.rows[0]?.id);
+
+      // Add journey event for pageview
+      if (normalized.sessionId && normalized.sessionId !== "0") {
+        const parsed = parseUrl(normalized.href);
+        await addJourneyEvent(pool, normalized.sessionId, "pageview", parsed.path, "page_view", null, normalized.timestamp);
+      }
 
     } else if (normalized.eventType === "web-vitals") {
       console.log("Inserting web-vitals:", {
@@ -275,6 +406,19 @@ async function insertEvent(normalized: ReturnType<typeof normalizeEvent>): Promi
         ]
       );
       console.log("Custom event inserted, id=", result.rows[0]?.id);
+
+      // Add journey event for custom events (conversions, engagement, etc.)
+      if (normalized.sessionId && normalized.sessionId !== "0" && normalized.eventName) {
+        const parsed = parseUrl(normalized.href);
+        const eventType = ["form_submit", "phone_click", "landing_page_conversion"].includes(normalized.eventName)
+          ? "conversion"
+          : "engagement";
+        let eventData: Record<string, unknown> | null = null;
+        try {
+          eventData = normalized.eventData ? JSON.parse(normalized.eventData) : null;
+        } catch {}
+        await addJourneyEvent(pool, normalized.sessionId, eventType, parsed.path, normalized.eventName, eventData, normalized.timestamp);
+      }
     }
   } catch (dbError) {
     console.error("Database error:", dbError);

@@ -2,18 +2,23 @@
  * @fileoverview Client-side form component for estimate landing page
  * @module app/estimate/estimate-form
  *
- * Isolated client component to keep main page as Server Component
+ * Isolated client component to keep main page as Server Component.
+ * Includes optional inline appointment booking.
  */
 
 "use client";
 
-import { type ReactElement, useState, useEffect, useRef } from "react";
+import { type ReactElement, useState, useEffect, useRef, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui";
 import { contactFormSchema, type ContactFormData } from "@/features/contact/schemas/contact-schema";
 import { COMPANY } from "@/lib/utils/constants";
 import { trackFormSubmission, trackLandingPageView, getUTMParams } from "@/lib/utils";
+import { DatePicker } from "@/features/scheduling/components/date-picker";
+import { TimeSlots } from "@/features/scheduling/components/time-slots";
+import { fetchAvailability, fetchSlots } from "@/features/scheduling/api/scheduling-api";
+import type { DayAvailability, TimeSlot } from "@/features/scheduling/types/scheduling.types";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 declare global {
@@ -27,9 +32,40 @@ interface EstimateFormProps {
   source: string;
 }
 
+function formatDisplayTime(time24: string): string {
+  const [hours, minutes] = time24.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
+function formatDisplayDate(dateStr: string): string {
+  const date = new Date(dateStr + "T12:00:00");
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+  });
+}
+
 export function EstimateForm({ source }: EstimateFormProps): ReactElement {
   const [submitStatus, setSubmitStatus] = useState<"idle" | "success" | "error">("idle");
   const formLoadedAt = useRef<number>(Date.now());
+
+  // Scheduling state — collapsed by default, expands on click
+  const [showScheduling, setShowScheduling] = useState(false);
+  const [days, setDays] = useState<DayAvailability[]>([]);
+  const [slots, setSlots] = useState<TimeSlot[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const [propertyAddress, setPropertyAddress] = useState("");
+  const [isLoadingDays, setIsLoadingDays] = useState(false);
+  const [isLoadingSlots, setIsLoadingSlots] = useState(false);
+  const [bookedAppointment, setBookedAppointment] = useState<{
+    date: string;
+    time: string;
+    address?: string;
+  } | null>(null);
 
   // Track page view on mount
   useEffect(() => {
@@ -52,8 +88,69 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
     mode: "onBlur",
   });
 
+  // Lazy-load availability when scheduling section is opened
+  const hasFetchedDays = useRef(false);
+  useEffect(() => {
+    if (!showScheduling || hasFetchedDays.current) return;
+    hasFetchedDays.current = true;
+
+    async function loadAvailability(): Promise<void> {
+      try {
+        setIsLoadingDays(true);
+        const response = await fetchAvailability(10);
+        if (response.success) {
+          setDays(response.days);
+          const firstAvailable = response.days.find((d) => d.isAvailable);
+          if (firstAvailable) {
+            setSelectedDate(firstAvailable.date);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load availability:", err);
+      } finally {
+        setIsLoadingDays(false);
+      }
+    }
+    loadAvailability();
+  }, [showScheduling]);
+
+  // Load slots when date changes
+  useEffect(() => {
+    async function loadSlots(): Promise<void> {
+      if (!selectedDate || !showScheduling) return;
+      try {
+        setIsLoadingSlots(true);
+        setSelectedTime(null);
+        const response = await fetchSlots(selectedDate);
+        if (response.success) {
+          setSlots(response.slots);
+        }
+      } catch (err) {
+        console.error("Failed to load slots:", err);
+      } finally {
+        setIsLoadingSlots(false);
+      }
+    }
+    loadSlots();
+  }, [selectedDate, showScheduling]);
+
+  const handleToggleScheduling = (): void => {
+    setShowScheduling((prev) => !prev);
+  };
+
+  const handleDateSelect = useCallback((date: string) => {
+    setSelectedDate(date);
+  }, []);
+
+  const handleTimeSelect = useCallback((time: string) => {
+    setSelectedTime(time);
+  }, []);
+
+  const hasBookingSelected = showScheduling && selectedDate && selectedTime;
+
   const onSubmit = async (data: ContactFormData): Promise<void> => {
     try {
+      // Submit lead + optional booking in a single request
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -61,10 +158,20 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
           ...data,
           source,
           formLoadedAt: formLoadedAt.current,
+          // Include scheduling data if selected
+          ...(hasBookingSelected && {
+            scheduling: {
+              date: selectedDate,
+              time: selectedTime,
+              propertyAddress: propertyAddress || undefined,
+            },
+          }),
         }),
       });
 
       if (!response.ok) throw new Error("Failed to send message");
+
+      const result = await response.json();
 
       // Track form submission
       trackFormSubmission("estimate", source);
@@ -79,6 +186,15 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
         }
       }
 
+      // Track if booking was confirmed
+      if (result.booked && selectedDate && selectedTime) {
+        setBookedAppointment({
+          date: selectedDate,
+          time: selectedTime,
+          address: propertyAddress || undefined,
+        });
+      }
+
       setSubmitStatus("success");
       reset();
     } catch {
@@ -86,6 +202,7 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
     }
   };
 
+  // Success state
   if (submitStatus === "success") {
     return (
       <div className="relative bg-white rounded-2xl p-8 shadow-2xl text-center">
@@ -94,10 +211,74 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h3 className="text-2xl font-bold text-[var(--foreground)]">Thank You!</h3>
-        <p className="mt-3 text-[var(--text-body)]">
-          We&apos;ll contact you within 24 hours with your free estimate.
-        </p>
+
+        {bookedAppointment ? (
+          <>
+            <h3 className="text-2xl font-bold text-[var(--foreground)]">You&apos;re All Set!</h3>
+            <p className="mt-2 text-[var(--text-body)]">
+              Your estimate request and site visit have been confirmed.
+            </p>
+
+            {/* Appointment details card */}
+            <div className="mt-6 bg-gray-50 rounded-xl p-5 text-left border border-gray-100">
+              <div className="flex items-start gap-3 mb-3">
+                <div className="w-10 h-10 bg-[var(--accent)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Site Visit</p>
+                  <p className="font-semibold text-[var(--foreground)]">
+                    {formatDisplayDate(bookedAppointment.date)}
+                  </p>
+                  <p className="text-[var(--accent)] font-medium">
+                    {formatDisplayTime(bookedAppointment.time)} (Central)
+                  </p>
+                </div>
+              </div>
+              {bookedAppointment.address && (
+                <div className="flex items-start gap-3 pt-3 border-t border-gray-200">
+                  <div className="w-10 h-10 bg-[var(--accent)]/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Property</p>
+                    <p className="font-medium text-[var(--foreground)]">{bookedAppointment.address}</p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-5 text-left">
+              <ul className="text-sm text-[var(--text-body)] space-y-1.5">
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Confirmation email sent to your inbox</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span>Reminder email 24 hours before your visit</span>
+                </li>
+              </ul>
+            </div>
+          </>
+        ) : (
+          <>
+            <h3 className="text-2xl font-bold text-[var(--foreground)]">Thank You!</h3>
+            <p className="mt-3 text-[var(--text-body)]">
+              We&apos;ll contact you within 24 hours with your free estimate.
+            </p>
+          </>
+        )}
+
         <a
           href={`tel:${COMPANY.phone}`}
           className="inline-flex items-center gap-2 mt-6 text-[var(--accent)] font-semibold hover:underline"
@@ -105,7 +286,7 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
           </svg>
-          Or call us now: {COMPANY.phone}
+          {bookedAppointment ? `Need to reschedule? Call ${COMPANY.phone}` : `Or call us now: ${COMPANY.phone}`}
         </a>
       </div>
     );
@@ -183,6 +364,122 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
           )}
         </div>
 
+        {/* Site Visit Scheduling — clickable expandable box */}
+        <div className="rounded-xl border-2 border-dashed border-gray-200 overflow-hidden transition-colors duration-200 hover:border-[var(--accent)]/40">
+          <button
+            type="button"
+            onClick={handleToggleScheduling}
+            className="w-full flex items-center gap-4 px-4 py-4 text-left"
+          >
+            {/* Calendar icon with pulsing dot */}
+            <div className="relative w-10 h-10 rounded-lg bg-[var(--accent)]/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {!showScheduling && (
+                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--accent)] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-[var(--accent)]" />
+                </span>
+              )}
+            </div>
+
+            {/* Title + subtitle */}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-[var(--foreground)]">
+                Book a FREE Site Visit
+              </p>
+              <p className="text-xs text-gray-400 mt-0.5">
+                Optional — lock in a time slot now
+              </p>
+            </div>
+
+            {/* Chevron */}
+            <svg
+              className={`w-5 h-5 text-gray-400 transition-transform duration-200 flex-shrink-0 ${showScheduling ? "rotate-180" : ""}`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          {/* Expanded calendar content */}
+          {showScheduling && (
+            <div className="px-4 pb-4 space-y-4 border-t border-gray-100">
+              {/* Date Selection */}
+              <div className="pt-4">
+                <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                  Preferred Day
+                </label>
+                <DatePicker
+                  days={days}
+                  selectedDate={selectedDate}
+                  onSelectDate={handleDateSelect}
+                  isLoading={isLoadingDays}
+                />
+              </div>
+
+              {/* Time Selection */}
+              {selectedDate && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">
+                    Preferred Time
+                  </label>
+                  <TimeSlots
+                    slots={slots}
+                    selectedTime={selectedTime}
+                    onSelectTime={handleTimeSelect}
+                    isLoading={isLoadingSlots}
+                  />
+                </div>
+              )}
+
+              {/* Property Address */}
+              {selectedTime && (
+                <div>
+                  <input
+                    type="text"
+                    value={propertyAddress}
+                    onChange={(e) => setPropertyAddress(e.target.value)}
+                    placeholder="Property address for the visit (optional)"
+                    className={inputStyles}
+                  />
+                </div>
+              )}
+
+              {/* Selection summary */}
+              {selectedDate && selectedTime && (
+                <div className="bg-green-50 rounded-lg p-3 flex items-center gap-2">
+                  <svg className="w-4 h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  <p className="text-sm text-green-700">
+                    {formatDisplayDate(selectedDate)} at {formatDisplayTime(selectedTime)}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedDate(null);
+                      setSelectedTime(null);
+                      setPropertyAddress("");
+                    }}
+                    className="ml-auto text-gray-400 hover:text-gray-600 text-xs"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+
+              {/* Disclaimer */}
+              <p className="text-xs text-gray-400 leading-relaxed">
+                * We&apos;ll do our best to accommodate your preferred time. We may reach out to confirm or adjust.
+              </p>
+            </div>
+          )}
+        </div>
+
         {/* Honeypot */}
         <div className="absolute -left-[9999px] opacity-0" aria-hidden="true">
           <label htmlFor="lp-website">Website</label>
@@ -202,7 +499,12 @@ export function EstimateForm({ source }: EstimateFormProps): ReactElement {
           className="w-full text-base"
           isLoading={isSubmitting}
         >
-          {isSubmitting ? "Sending..." : "Get My Free Estimate"}
+          {isSubmitting
+            ? "Sending..."
+            : hasBookingSelected
+              ? "Get Estimate & Book Visit"
+              : "Get My Free Estimate"
+          }
         </Button>
 
         <div className="flex items-center justify-center gap-4 pt-2">

@@ -13,6 +13,11 @@ import {
   generateCustomerConfirmationEmailText,
 } from "@/features/contact/email-template";
 import { createLead } from "@/lib/db";
+import { createAppointment, getAvailableSlots } from "@/lib/db/scheduling";
+import {
+  generateBookingConfirmationEmail,
+  generateBookingConfirmationEmailText,
+} from "@/features/scheduling/email-templates";
 
 /**
  * Handles POST requests for contact form submissions.
@@ -22,6 +27,23 @@ import { createLead } from "@/lib/db";
  */
 // Minimum time (in ms) a human would take to fill out the form
 const MIN_FORM_TIME_MS = 3000; // 3 seconds
+
+function formatDisplayTime(time24: string): string {
+  const [hours, minutes] = time24.split(":").map(Number);
+  const period = hours >= 12 ? "PM" : "AM";
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${minutes.toString().padStart(2, "0")} ${period}`;
+}
+
+function formatDisplayDate(dateStr: string): string {
+  const date = new Date(dateStr + "T12:00:00");
+  return date.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
 
 export async function POST(request: Request): Promise<NextResponse> {
   try {
@@ -37,6 +59,14 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     const { name, email, phone, company, service, message, source, website, formLoadedAt } = result.data;
+
+    // Extract optional scheduling data (not part of contact schema validation)
+    const bodyData = body as Record<string, unknown>;
+    const schedulingData = bodyData.scheduling as {
+      date?: string;
+      time?: string;
+      propertyAddress?: string;
+    } | undefined;
 
     // Bot protection: Check honeypot field
     if (website && website.length > 0) {
@@ -61,9 +91,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       }
     }
 
-    // Save lead to database (non-blocking - don't fail if DB is unavailable)
+    // Save lead to database
+    let leadId: number | null = null;
     try {
-      await createLead({
+      const lead = await createLead({
         name,
         email,
         phone: phone || null,
@@ -72,10 +103,42 @@ export async function POST(request: Request): Promise<NextResponse> {
         message,
         source: source || null,
       });
-      console.log("Lead saved to database:", email);
+      leadId = lead.id;
+      console.log("Lead saved to database:", email, "ID:", leadId);
     } catch (dbError) {
       // Log but don't fail - email notifications are the primary function
       console.error("Failed to save lead to database:", dbError);
+    }
+
+    // Book appointment if scheduling data is provided
+    let bookingInfo: { date: string; time: string; propertyAddress?: string } | undefined;
+    if (leadId && schedulingData?.date && schedulingData?.time) {
+      try {
+        // Verify the slot is still available
+        const slots = await getAvailableSlots(schedulingData.date);
+        const requestedSlot = slots.find((s) => s.time === schedulingData.time);
+
+        if (requestedSlot?.available) {
+          await createAppointment({
+            leadId,
+            appointmentDate: schedulingData.date,
+            appointmentTime: schedulingData.time,
+            propertyAddress: schedulingData.propertyAddress,
+          });
+
+          bookingInfo = {
+            date: formatDisplayDate(schedulingData.date),
+            time: formatDisplayTime(schedulingData.time),
+            propertyAddress: schedulingData.propertyAddress,
+          };
+          console.log("Appointment booked for lead:", leadId, schedulingData.date, schedulingData.time);
+        } else {
+          console.warn("Requested slot no longer available:", schedulingData.date, schedulingData.time);
+        }
+      } catch (bookingError) {
+        // Don't fail the submission if booking fails
+        console.error("Failed to book appointment:", bookingError);
+      }
     }
 
     // Check for Resend API key
@@ -92,6 +155,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       console.log("Company:", company || "Not provided");
       console.log("Service:", service || "Not specified");
       console.log("Source:", source || "Direct");
+      if (bookingInfo) {
+        console.log("SITE VISIT:", bookingInfo.date, bookingInfo.time);
+        console.log("Property:", bookingInfo.propertyAddress || "Not provided");
+      }
       console.log("-".repeat(60));
       console.log("Message:", message);
       console.log("=".repeat(60));
@@ -99,10 +166,12 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({
         success: true,
         message: "Form submission received (dev mode)",
+        leadId,
+        booked: !!bookingInfo,
       });
     }
 
-    // Generate the professional email
+    // Generate the professional email (now includes booking info if present)
     const emailHtml = generateLeadEmail({
       name,
       email,
@@ -111,6 +180,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       service,
       message,
       source,
+      booking: bookingInfo,
     });
 
     const emailText = generateLeadEmailText({
@@ -121,6 +191,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       service,
       message,
       source,
+      booking: bookingInfo,
     });
 
     // Determine service name for subject line
@@ -143,8 +214,10 @@ export async function POST(request: Request): Promise<NextResponse> {
       body: JSON.stringify({
         from: "Rollcog Leads <leads@rollcogroofing.com>",
         // TODO: Change back to COMPANY.email for production
-        to: ["office@rollcog.com", "kim@atjcorp.net"],
-        subject: `[NEW LEAD] ${name} - ${serviceName}${source ? ` (${source})` : ""}`,
+        to: ["office@rollcog.com", "kim@atjcorp.net", "matthewtrundle@gmail.com"],
+        subject: bookingInfo
+          ? `[VISIT BOOKED] ${name} - ${serviceName} - ${bookingInfo.date}`
+          : `[NEW LEAD] ${name} - ${serviceName}${source ? ` (${source})` : ""}`,
         html: emailHtml,
         text: emailText,
         reply_to: email,
@@ -163,15 +236,30 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     // Send confirmation email to the customer
-    const confirmationHtml = generateCustomerConfirmationEmail({
-      name,
-      service,
-    });
+    // If they booked a visit, send booking confirmation; otherwise generic confirmation
+    let customerEmailHtml: string;
+    let customerEmailText: string;
+    let customerSubject: string;
 
-    const confirmationText = generateCustomerConfirmationEmailText({
-      name,
-      service,
-    });
+    if (bookingInfo && schedulingData?.date && schedulingData?.time) {
+      customerEmailHtml = generateBookingConfirmationEmail({
+        name,
+        appointmentDate: schedulingData.date,
+        appointmentTime: schedulingData.time,
+        propertyAddress: schedulingData.propertyAddress,
+      });
+      customerEmailText = generateBookingConfirmationEmailText({
+        name,
+        appointmentDate: schedulingData.date,
+        appointmentTime: schedulingData.time,
+        propertyAddress: schedulingData.propertyAddress,
+      });
+      customerSubject = "Your Site Visit is Confirmed - Rollcog Roofs";
+    } else {
+      customerEmailHtml = generateCustomerConfirmationEmail({ name, service });
+      customerEmailText = generateCustomerConfirmationEmailText({ name, service });
+      customerSubject = "Thank you for contacting Rollcog Roofs!";
+    }
 
     const confirmationResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -182,9 +270,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       body: JSON.stringify({
         from: "Rollcog Roofs <hello@rollcogroofing.com>",
         to: [email],
-        subject: `Thank you for contacting Rollcog Roofs!`,
-        html: confirmationHtml,
-        text: confirmationText,
+        subject: customerSubject,
+        html: customerEmailHtml,
+        text: customerEmailText,
         reply_to: "office@rollcog.com",
       }),
     });
@@ -209,6 +297,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({
       success: true,
       message: "Message sent successfully",
+      leadId,
+      booked: !!bookingInfo,
     });
   } catch (error) {
     console.error("Contact form error:", error);

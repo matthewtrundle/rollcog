@@ -271,3 +271,17 @@ export async function getLeadStats(): Promise<{
 
   return { total, thisWeek, byStatus, bySource };
 }
+
+// Re-export scheduling functions
+export {
+  getAvailabilitySlotsForDay,
+  getBookedAppointmentsForDate,
+  getAvailableSlots,
+  getWeeklyAvailability,
+  createAppointment,
+  getAppointmentById,
+  getAppointmentWithLead,
+  updateAppointment,
+  getAppointmentsNeedingReminders,
+  cancelAppointment,
+} from "./scheduling";

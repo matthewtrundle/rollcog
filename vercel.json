@@ -1,0 +1,16 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/daily-intelligence",
+      "schedule": "0 12 * * *"
+    },
+    {
+      "path": "/api/cron/weekly-summary",
+      "schedule": "0 14 * * 0"
+    },
+    {
+      "path": "/api/cron/appointment-reminders",
+      "schedule": "0 14 * * *"
+    }
+  ]
+}

@@ -13,6 +13,11 @@ interface LeadEmailData {
   service?: string;
   message: string;
   source?: string;
+  booking?: {
+    date: string; // Display-formatted date
+    time: string; // Display-formatted time
+    propertyAddress?: string;
+  };
 }
 
 // Service name mapping for display
@@ -87,8 +92,8 @@ export function generateLeadEmail(data: LeadEmailData): string {
                     </p>
                   </td>
                   <td style="text-align: right;">
-                    <div style="background-color: #dc2626; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">
-                      HOT LEAD
+                    <div style="background-color: ${data.booking ? "#22c55e" : "#dc2626"}; color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block;">
+                      ${data.booking ? "VISIT BOOKED" : "HOT LEAD"}
                     </div>
                   </td>
                 </tr>
@@ -173,6 +178,44 @@ export function generateLeadEmail(data: LeadEmailData): string {
             </td>
           </tr>
 
+          ${data.booking ? `
+          <!-- Site Visit Booked -->
+          <tr>
+            <td style="padding: 0 40px 32px 40px;">
+              <div style="background-color: #dcfce7; border-radius: 8px; padding: 20px; border-left: 4px solid #22c55e;">
+                <h2 style="margin: 0 0 12px 0; color: #166534; font-size: 16px; font-weight: 600;">
+                  SITE VISIT BOOKED
+                </h2>
+                <table role="presentation" style="width: 100%;">
+                  <tr>
+                    <td style="padding: 4px 0;">
+                      <p style="margin: 0; color: #166534; font-size: 14px;">
+                        <strong>Date:</strong> ${data.booking.date}
+                      </p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 4px 0;">
+                      <p style="margin: 0; color: #166534; font-size: 14px;">
+                        <strong>Time:</strong> ${data.booking.time} (Central)
+                      </p>
+                    </td>
+                  </tr>
+                  ${data.booking.propertyAddress ? `
+                  <tr>
+                    <td style="padding: 4px 0;">
+                      <p style="margin: 0; color: #166534; font-size: 14px;">
+                        <strong>Property:</strong> ${data.booking.propertyAddress}
+                      </p>
+                    </td>
+                  </tr>
+                  ` : ""}
+                </table>
+              </div>
+            </td>
+          </tr>
+          ` : ""}
+
           <!-- Quick Actions -->
           <tr>
             <td style="padding: 0 40px 32px 40px;">
@@ -220,7 +263,9 @@ export function generateLeadEmail(data: LeadEmailData): string {
           <tr>
             <td style="background-color: #1a1a1a; padding: 16px 40px; text-align: center;">
               <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px;">
-                Remember: Respond within 24 hours for best conversion rates
+                ${data.booking
+                  ? "This lead booked a site visit. Confirm the appointment and prepare for the visit."
+                  : "Remember: Respond within 24 hours for best conversion rates"}
               </p>
             </td>
           </tr>
@@ -484,7 +529,7 @@ NEW LEAD RECEIVED
 ${timestamp}
 
 Lead Source: ${sourceName}
-
+${data.booking ? `\n*** SITE VISIT BOOKED ***\nDate: ${data.booking.date}\nTime: ${data.booking.time} (Central)${data.booking.propertyAddress ? `\nProperty: ${data.booking.propertyAddress}` : ""}\n` : ""}
 -------------------
 CONTACT INFORMATION
 -------------------
@@ -508,6 +553,6 @@ ${COMPANY.address.street}
 ${COMPANY.address.city}, ${COMPANY.address.state} ${COMPANY.address.zip}
 ${COMPANY.phone} | ${COMPANY.email}
 
-Remember: Respond within 24 hours for best conversion rates!
+${data.booking ? "This lead booked a site visit. Confirm the appointment and prepare for the visit." : "Remember: Respond within 24 hours for best conversion rates!"}
   `.trim();
 }
