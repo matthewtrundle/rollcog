@@ -17,7 +17,7 @@ import {
 
 const SERVICE_NAME = "Chicago Commercial & Industrial Roofing";
 const SERVICE_DESCRIPTION =
-  "Full-service commercial and industrial roofing in Chicago & Chicagoland. Warehouses, factories, office buildings, retail centers, and more.";
+  "Full-service commercial and industrial roofing in Chicago & Chicagoland. Expert commercial roofing services for warehouses, factories, office buildings, and retail centers. GAF Certified with 27+ years experience.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -132,7 +132,7 @@ export default function CommercialIndustrialPage(): ReactElement {
           {/* Buildings we serve - Simple text list */}
           <div className="mt-12 pt-8 border-t border-[var(--border)]">
             <h2 className="text-xl font-medium text-[var(--foreground)] mb-6">
-              Buildings We Serve
+              Buildings We Serve in Chicago
             </h2>
             <div className="grid gap-x-8 gap-y-2 md:grid-cols-2 text-[var(--text-body)]">
               <p>Warehouses & Distribution Centers</p>
@@ -143,6 +143,48 @@ export default function CommercialIndustrialPage(): ReactElement {
               <p>Schools & Universities</p>
               <p>Restaurants & Food Service</p>
               <p>Multi-Family Housing</p>
+            </div>
+          </div>
+
+          {/* Chicago Commercial Roofing FAQ */}
+          <div className="mt-12 pt-8 border-t border-[var(--border)]">
+            <h2 className="text-xl font-medium text-[var(--foreground)] mb-6">
+              Chicago Commercial Roofing FAQ
+            </h2>
+            <div className="space-y-6 text-[var(--text-body)]">
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  What commercial roofing services do you offer in Chicago?
+                </h3>
+                <p>
+                  We provide complete commercial roofing services in Chicago including new
+                  roof installation, roof replacement, repairs, and maintenance. Our team
+                  specializes in TPO, modified bitumen, EPDM, and other flat roof systems
+                  for commercial and industrial buildings.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  Are you licensed for commercial roofing in Chicago?
+                </h3>
+                <p>
+                  Yes, we are fully licensed, bonded, and insured for commercial roofing
+                  work in Chicago and throughout Illinois. We&apos;re also GAF Certified,
+                  which means our team has been factory-trained by North America&apos;s
+                  largest roofing manufacturer.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  How fast can you provide a commercial roofing estimate in Chicago?
+                </h3>
+                <p>
+                  We provide detailed commercial roofing estimates within 24 hours for
+                  Chicago-area properties. Our estimators will visit your property, assess
+                  your roof&apos;s condition, and provide a comprehensive quote with
+                  multiple options when applicable.
+                </p>
+              </div>
             </div>
           </div>
         </div>

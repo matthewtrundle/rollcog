@@ -69,6 +69,25 @@ const STATS = [
   { value: "24hr", label: "Estimate Delivery" },
 ];
 
+// Services for Chicago commercial roofing
+const SERVICES = [
+  {
+    title: "Flat Roof Repair Chicago",
+    description: "Emergency flat roof repairs for Chicago commercial buildings. We fix leaks, ponding water, and membrane damage fast.",
+    icon: "repair",
+  },
+  {
+    title: "Commercial Roofing Services",
+    description: "Full-service commercial roofing in Chicago and Chicagoland. TPO, Modified Bitumen, EPDM installation and maintenance.",
+    icon: "commercial",
+  },
+  {
+    title: "Industrial Roofing Chicago",
+    description: "Large-scale industrial roofing projects for warehouses, factories, and distribution centers across Chicagoland.",
+    icon: "industrial",
+  },
+];
+
 // Testimonials
 const TESTIMONIALS = [
   {
@@ -275,7 +294,7 @@ export default async function EstimateLandingPage({ searchParams }: PageProps): 
               className="text-3xl lg:text-4xl font-bold text-white"
               style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
             >
-              Trusted by Businesses Across America
+              Trusted by Businesses Across Chicago
             </h2>
           </div>
 
@@ -288,6 +307,71 @@ export default async function EstimateLandingPage({ searchParams }: PageProps): 
                 <p className="mt-2 text-white/60 font-medium">{stat.label}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Services Section - Chicago Commercial Roofing */}
+      <section className="bg-white py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm font-medium text-[var(--accent)] uppercase tracking-wider mb-4">
+              Our Services
+            </p>
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-[var(--foreground)]"
+              style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
+            >
+              Commercial Roofing Services in Chicago
+            </h2>
+            <p className="mt-4 text-lg text-[var(--text-muted)] max-w-2xl mx-auto">
+              From emergency flat roof repair to complete commercial roofing installation,
+              we serve Chicago and Chicagoland businesses with expert solutions.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {SERVICES.map((service) => (
+              <div
+                key={service.title}
+                className="bg-[var(--cream)] rounded-2xl p-8 border border-[var(--border)] hover:shadow-lg transition-shadow"
+              >
+                <div className="w-12 h-12 bg-[var(--accent)]/10 rounded-xl flex items-center justify-center mb-6">
+                  {service.icon === "repair" && (
+                    <svg className="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                  )}
+                  {service.icon === "commercial" && (
+                    <svg className="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                  )}
+                  {service.icon === "industrial" && (
+                    <svg className="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                    </svg>
+                  )}
+                </div>
+                <h3 className="text-xl font-semibold text-[var(--foreground)] mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-[var(--text-body)] leading-relaxed">
+                  {service.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Additional Chicago roofing content for SEO */}
+          <div className="mt-16 text-center">
+            <p className="text-[var(--text-muted)] max-w-3xl mx-auto leading-relaxed">
+              Serving the greater Chicago area including Willowbrook, Oak Brook, Naperville, Aurora,
+              Schaumburg, and all of Chicagoland. Our commercial roofing experts specialize in
+              TPO roofing, modified bitumen, EPDM, and flat roof systems for warehouses,
+              office buildings, retail centers, and industrial facilities.
+            </p>
           </div>
         </div>
       </section>
@@ -348,6 +432,65 @@ export default async function EstimateLandingPage({ searchParams }: PageProps): 
         </div>
       </section>
 
+      {/* Why Choose Us - Trust Signals */}
+      <section className="bg-[var(--cream)] py-20">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="text-center mb-16">
+            <p className="text-sm font-medium text-[var(--accent)] uppercase tracking-wider mb-4">
+              Why Chicago Businesses Choose Us
+            </p>
+            <h2
+              className="text-3xl lg:text-4xl font-bold text-[var(--foreground)]"
+              style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
+            >
+              Licensed, Insured & Certified
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white rounded-xl p-6 text-center border border-[var(--border)]">
+              <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-[var(--foreground)] mb-2">GAF Certified</h3>
+              <p className="text-sm text-[var(--text-muted)]">Factory-trained and certified by GAF, North America&apos;s largest roofing manufacturer</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 text-center border border-[var(--border)]">
+              <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-[var(--foreground)] mb-2">Fully Insured</h3>
+              <p className="text-sm text-[var(--text-muted)]">Comprehensive liability and workers&apos; compensation coverage for your protection</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 text-center border border-[var(--border)]">
+              <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-[var(--foreground)] mb-2">5-Star Reviews</h3>
+              <p className="text-sm text-[var(--text-muted)]">Consistently rated 5 stars by Chicago businesses for quality and service</p>
+            </div>
+
+            <div className="bg-white rounded-xl p-6 text-center border border-[var(--border)]">
+              <div className="w-16 h-16 bg-[var(--accent)]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-[var(--accent)]" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <h3 className="font-semibold text-[var(--foreground)] mb-2">24-Hour Response</h3>
+              <p className="text-sm text-[var(--text-muted)]">Fast estimates and emergency repair response for Chicago commercial properties</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Final CTA */}
       <section className="relative bg-[var(--charcoal)] py-24 overflow-hidden">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 text-center">
@@ -360,11 +503,11 @@ export default async function EstimateLandingPage({ searchParams }: PageProps): 
             className="text-4xl lg:text-5xl font-bold text-white mb-6"
             style={{ fontFamily: 'var(--font-heading), Georgia, serif' }}
           >
-            Ready to Protect Your Investment?
+            Ready to Protect Your Chicago Property?
           </h2>
 
           <p className="text-xl text-white/70 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Get your free, no-obligation estimate today. Our team will respond within 24 hours with a detailed quote.
+            Get your free, no-obligation estimate today. Our Chicago commercial roofing team will respond within 24 hours with a detailed quote.
           </p>
 
           <a

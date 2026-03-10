@@ -16,7 +16,7 @@ import {
 
 const SERVICE_NAME = "Chicago Flat Roof Repair & Replacement";
 const SERVICE_DESCRIPTION =
-  "Expert flat roof repair and replacement in Chicago & Chicagoland. Emergency repairs within 5 days. Free inspections for commercial buildings.";
+  "Expert flat roof repair and replacement in Chicago & Chicagoland. Emergency repairs within 5 days. Free inspections for commercial buildings. Serving Chicago, Oak Brook, Naperville, Aurora, and all of Chicagoland.";
 
 export const metadata: Metadata = generateServiceMetadata(
   SERVICE_NAME,
@@ -151,6 +151,46 @@ export default function FlatRoofRepairPage(): ReactElement {
                 Higher energy bills—sign of compromised insulation
               </li>
             </ul>
+          </div>
+
+          {/* Chicago Flat Roof FAQ */}
+          <div className="mt-12 pt-8 border-t border-[var(--border)]">
+            <h2 className="text-xl font-medium text-[var(--foreground)] mb-6">
+              Chicago Flat Roof Repair FAQ
+            </h2>
+            <div className="space-y-6 text-[var(--text-body)]">
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  How quickly can you repair a flat roof in Chicago?
+                </h3>
+                <p>
+                  We prioritize emergency flat roof repairs in Chicago and complete most
+                  repairs within 5 days of your initial contact. For active leaks threatening
+                  your building or inventory, we can often respond faster.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  What areas of Chicago do you serve for flat roof repair?
+                </h3>
+                <p>
+                  We serve all of Chicago and Chicagoland including Willowbrook, Oak Brook,
+                  Naperville, Aurora, Schaumburg, Downers Grove, Elmhurst, and surrounding
+                  suburbs. Based in Willowbrook, IL, we&apos;re centrally located to serve
+                  the greater Chicago metro area.
+                </p>
+              </div>
+              <div>
+                <h3 className="font-medium text-[var(--foreground)] mb-2">
+                  Do you offer free flat roof inspections in Chicago?
+                </h3>
+                <p>
+                  Yes, we provide free roof inspections for commercial properties in the
+                  Chicago area. Our GAF-certified team will assess your flat roof&apos;s
+                  condition and provide honest recommendations for repair or replacement.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </Section>
