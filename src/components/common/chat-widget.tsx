@@ -248,7 +248,7 @@ export function ChatWidget(): ReactElement | null {
       >
         {/* Notification badge */}
         {showGreeting && !isOpen && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold animate-pulse">
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold animate-pulse [animation-iteration-count:3]">
             1
           </span>
         )}
@@ -356,7 +356,7 @@ export function ChatWidget(): ReactElement | null {
           75% { transform: rotate(-15deg); }
         }
         .animate-wave {
-          animation: wave 1.5s ease-in-out infinite;
+          animation: wave 1.5s ease-in-out 3;
           transform-origin: 70% 70%;
           display: inline-block;
         }

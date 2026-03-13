@@ -9,8 +9,7 @@ import { Inter, Source_Serif_4 } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { Navigation } from "@/components/common/navigation";
 import { Footer } from "@/components/common/footer";
-import { ChatWidget } from "@/components/common/chat-widget";
-import { QuizFloatingWidget } from "@/components/lead-magnets";
+import { LazyWidgets } from "@/components/common/lazy-widgets";
 import { generateLocalBusinessSchema } from "@/lib/seo";
 import { SITE_CONFIG } from "@/lib/utils/constants";
 import "./globals.css";
@@ -25,7 +24,7 @@ const sourceSerif = Source_Serif_4({
   variable: "--font-serif",
   subsets: ["latin"],
   display: "swap",
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "600", "700"],
 });
 
 /**
@@ -65,18 +64,22 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${sourceSerif.variable}`}>
       <head>
-        {/* Preload critical assets */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-
-        {/* Google Analytics / Google Ads - lazyOnload to not block LCP */}
+        {/* Preload hero image for faster LCP */}
+        <link
+          rel="preload"
+          as="image"
+          href="/images/hero-roofing-team.webp"
+          type="image/webp"
+          fetchPriority="high"
+        />
+        {/* Google Analytics / Google Ads - afterInteractive for reliable conversion tracking */}
         {GA_MEASUREMENT_ID && (
           <>
             <Script
               src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
-              strategy="lazyOnload"
+              strategy="afterInteractive"
             />
-            <Script id="google-analytics" strategy="lazyOnload">
+            <Script id="google-analytics" strategy="afterInteractive">
               {`
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -103,8 +106,7 @@ export default function RootLayout({
         <Navigation />
         <main id="main-content" className="flex-1 pt-16 lg:pt-20">{children}</main>
         <Footer />
-        <ChatWidget />
-        <QuizFloatingWidget delay={8000} source="global" />
+        <LazyWidgets />
         <Analytics />
       </body>
     </html>
