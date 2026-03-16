@@ -119,7 +119,7 @@ export async function POST(request: Request): Promise<NextResponse<BookingRespon
           },
           body: JSON.stringify({
             from: "Rollcog Leads <leads@rollcogroofing.com>",
-            to: ["office@rollcog.com", "kim@atjcorp.net", "matthewtrundle@gmail.com"],
+            to: ["office@rollcog.com", "kim@atjcorp.net", "matthewtrundle@gmail.com", "martin.spokas@alogicapp.com"],
             subject: `[SITE VISIT BOOKED] ${lead.name} - ${formatDisplayDate(appointmentDate)} at ${formatDisplayTime(appointmentTime)}`,
             html: teamNotification,
           }),

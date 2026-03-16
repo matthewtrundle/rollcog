@@ -214,7 +214,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       body: JSON.stringify({
         from: "Rollcog Leads <leads@rollcogroofing.com>",
         // TODO: Change back to COMPANY.email for production
-        to: ["office@rollcog.com", "kim@atjcorp.net", "matthewtrundle@gmail.com"],
+        to: ["office@rollcog.com", "kim@atjcorp.net", "matthewtrundle@gmail.com", "martin.spokas@alogicapp.com"],
         subject: bookingInfo
           ? `[VISIT BOOKED] ${name} - ${serviceName} - ${bookingInfo.date}`
           : `[NEW LEAD] ${name} - ${serviceName}${source ? ` (${source})` : ""}`,
